@@ -184,14 +184,14 @@ Additional artifacts by level:
 ## Level Checklists
 
 ### Level 1 Checklist
-- [ ] Branch created: `level/1-foundation-wallet-payment`
-- [ ] Wallet connect/disconnect complete.
-- [ ] Balance display + refresh complete.
-- [ ] Simple payment + transaction feedback complete.
-- [ ] README + screenshots updated.
-- [ ] Tests/checks passed.
-- [ ] PR created and merged with merge commit.
-- [ ] Tag `v0.1.0` created.
+- [x] Branch created: `level/1-foundation-wallet-payment`
+- [x] Wallet connect/disconnect complete.
+- [x] Balance display + refresh complete.
+- [x] Simple payment + transaction feedback complete.
+- [x] README + screenshots updated.
+- [x] Tests/checks passed.
+- [x] PR created and merged with merge commit.
+- [x] Tag `v0.1.0` created.
 
 ### Level 2 Checklist
 - [ ] Branch created: `level/2-multi-wallet-escrow`
