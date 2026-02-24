@@ -8,14 +8,22 @@ import { WorkflowSection } from "@/components/landing/workflow-section";
 export default function HomePage() {
   return (
     <main className="relative min-h-screen overflow-hidden">
+      {/* Dashboard-inspired background */}
       <div className="landing-grid absolute inset-0 -z-10" />
-      <div className="landing-glow absolute -top-24 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 rounded-full blur-3xl" />
+      
+      {/* Animated background orbs */}
+      <div className="absolute -top-40 -left-40 h-80 w-80 rounded-full bg-[var(--brand)]/15 blur-3xl animate-pulse opacity-50" />
+      <div className="absolute -bottom-40 -right-40 h-80 w-80 rounded-full bg-sky-500/15 blur-3xl animate-pulse opacity-50" style={{ animationDelay: "1s" }} />
 
       <LandingHeader />
-      <HeroSection />
-      <FeaturesSection />
-      <WorkflowSection />
-      <FaqSection />
+
+      <div className="space-y-0">
+        <HeroSection />
+        <FeaturesSection />
+        <WorkflowSection />
+        <FaqSection />
+      </div>
+
       <LandingFooter />
     </main>
   );
