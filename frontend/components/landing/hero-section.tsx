@@ -1,10 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PaymentFlowIllustration } from "@/components/landing/illustrations";
+import { useWallet } from "@/lib/hooks/use-wallet";
 
 export function HeroSection() {
+  const { walletAddress, handleConnect } = useWallet({ pushToast: () => {} });
   return (
     <section className="relative mx-auto w-full max-w-7xl px-6 py-24 md:px-10 md:py-32">
       {/* Animated gradient background orbs */}
@@ -35,16 +39,31 @@ export function HeroSection() {
           </div>
 
           <div className="flex flex-wrap gap-4 pt-4 animate-in fade-in slide-in-from-left-8 duration-1000" style={{ animationDelay: "0.4s", animationFillMode: "both" }}>
-            <Button
-              asChild
-              size="lg"
-              className="gap-2 bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)] transition-all hover:shadow-lg hover:shadow-[var(--brand)]/30"
-            >
-              <Link href="/dashboard">
-                Launch Dashboard
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
+            {walletAddress ? (
+              <>
+                <Button
+                  asChild
+                  size="lg"
+                  className="gap-2 bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)] transition-all hover:shadow-lg hover:shadow-[var(--brand)]/30"
+                >
+                  <Link href="/dashboard">
+                    Launch Dashboard
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  size="lg"
+                  className="gap-2 bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)] transition-all hover:shadow-lg hover:shadow-[var(--brand)]/30"
+                  onClick={handleConnect}
+                >
+                  Get Started
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </>
+            )}
             <Button
               asChild
               size="lg"

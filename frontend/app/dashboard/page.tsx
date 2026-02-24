@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
@@ -15,9 +17,26 @@ import { usePayment } from "@/lib/hooks/use-payment";
 import { EXPLORER_CONFIG } from "@/lib/config";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { toasts, pushToast, removeToast } = useToasts();
 
   const wallet = useWallet({ pushToast });
+
+  // Redirect to home if wallet is not connected
+  useEffect(() => {
+    if (wallet.walletAddress === null && !wallet.isConnectingWallet) {
+      // Small delay to avoid flickering
+      const timer = setTimeout(() => {
+        pushToast(
+          "Wallet Required",
+          "Please connect a wallet to access the dashboard",
+          "error"
+        );
+        router.push("/");
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [wallet.walletAddress, wallet.isConnectingWallet, router, pushToast]);
 
   const payment = usePayment({
     walletAddress: wallet.walletAddress,
