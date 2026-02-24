@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import type { AppToast, ToastLevel } from "@/components/dashboard/toast-stack";
+import { APP_CONFIG } from "@/lib/config";
 
 export function useToasts() {
   const [toasts, setToasts] = useState<AppToast[]>([]);
@@ -12,7 +13,7 @@ export function useToasts() {
       setToasts((prev) => [...prev, { id: toastId, title, description, level }]);
       window.setTimeout(() => {
         setToasts((prev) => prev.filter((toast) => toast.id !== toastId));
-      }, 5000);
+      }, APP_CONFIG.toastDuration);
     },
     [],
   );
