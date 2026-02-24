@@ -1,6 +1,45 @@
-# Rust's output directory
-target
+# Rust Build Artifacts
+/target
+Cargo.lock
+*.swp
+*.swo
+*~
+.DS_Store
 
-# Local settings
-.soroban
-.stellar
+# Soroban Local Development
+.soroban/
+.soroban-cli/
+soroban-test-accounts.json
+
+# Stellar Development
+.stellar/
+keys/
+*.secret
+
+# IDE & Editor
+.vscode/
+.idea/
+*.iml
+*.rs.bk
+
+# OS Files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Logs
+*.log
+*.out
+
+# Contract Build Cache
+.cargo/
+
+# Environment & Secrets
+.env
+.env.local
+*.pem
+
+# Debug
+debug.log
+.gdb_history
