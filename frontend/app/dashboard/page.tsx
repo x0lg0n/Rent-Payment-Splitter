@@ -12,10 +12,7 @@ import { TransactionHistoryCard } from "@/components/dashboard/transaction-histo
 import { useToasts } from "@/lib/hooks/use-toasts";
 import { useWallet } from "@/lib/hooks/use-wallet";
 import { usePayment } from "@/lib/hooks/use-payment";
-
-const TESTNET_TX_EXPLORER_BASE = "https://stellar.expert/explorer/testnet/tx";
-const TESTNET_FRIENDBOT =
-  "https://laboratory.stellar.org/#account-creator?network=test";
+import { EXPLORER_CONFIG } from "@/lib/config";
 
 export default function DashboardPage() {
   const { toasts, pushToast, removeToast } = useToasts();
@@ -83,7 +80,7 @@ export default function DashboardPage() {
                 : undefined
             }
             isZeroBalance={wallet.walletOnTestnet && (wallet.walletBalance ?? 0) === 0}
-            friendbotUrl={TESTNET_FRIENDBOT}
+            friendbotUrl={EXPLORER_CONFIG.friendbotUrl}
           />
           <PaymentFormCard
             recipientAddress={payment.recipientAddress}
@@ -98,7 +95,7 @@ export default function DashboardPage() {
 
         <TransactionHistoryCard
           transactions={payment.transactions}
-          explorerBaseUrl={TESTNET_TX_EXPLORER_BASE}
+          explorerBaseUrl={EXPLORER_CONFIG.txBaseUrl}
           onCopyHash={payment.copyText}
         />
 
@@ -114,7 +111,7 @@ export default function DashboardPage() {
 
       <PaymentSuccessDialog
         hash={payment.paymentSuccessHash}
-        explorerBaseUrl={TESTNET_TX_EXPLORER_BASE}
+        explorerBaseUrl={EXPLORER_CONFIG.txBaseUrl}
         onClose={() => payment.setPaymentSuccessHash(null)}
         onCopy={payment.copyText}
       />

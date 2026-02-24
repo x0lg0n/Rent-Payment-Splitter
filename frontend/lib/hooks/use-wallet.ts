@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchTestnetXlmBalance } from "@/lib/stellar/horizon";
 import { isMainnetNetwork, isTestnetNetwork } from "@/lib/stellar/network";
 import { connectFreighter, getFreighterSession } from "@/lib/wallet/freighter";
+import { APP_CONFIG } from "@/lib/config";
 import type { ToastLevel } from "@/components/dashboard/toast-stack";
 
 interface UseWalletOptions {
@@ -72,7 +73,7 @@ export function useWallet({ pushToast }: UseWalletOptions) {
     void refreshBalance(walletAddress, walletNetwork);
     const timer = window.setInterval(() => {
       void refreshBalance(walletAddress, walletNetwork);
-    }, 30_000);
+    }, APP_CONFIG.balanceRefreshInterval);
 
     return () => window.clearInterval(timer);
   }, [refreshBalance, walletAddress, walletNetwork, walletOnTestnet]);
