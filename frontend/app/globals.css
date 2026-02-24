@@ -48,6 +48,9 @@
 }
 
 :root {
+  --brand: #185adb;
+  --brand-strong: #114ac2;
+  --brand-soft: #dbe8ff;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -122,5 +125,48 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .landing-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--brand) 9%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--brand) 9%, transparent) 1px, transparent 1px),
+      linear-gradient(180deg, #ffffff 0%, #f4f8ff 55%, #f0f5ff 100%);
+    background-size:
+      34px 34px,
+      34px 34px,
+      100% 100%;
+  }
+
+  .landing-glow {
+    background: radial-gradient(circle, color-mix(in oklab, var(--brand) 20%, white), transparent 70%);
+  }
+
+  .dark .landing-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--brand) 18%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--brand) 18%, transparent) 1px, transparent 1px),
+      linear-gradient(180deg, #0e1322 0%, #0a0f1d 55%, #070b16 100%);
+  }
+
+  .dark .landing-glow {
+    background: radial-gradient(circle, color-mix(in oklab, var(--brand) 34%, black), transparent 70%);
+  }
+
+  .animate-enter {
+    animation: enter 0.65s ease both;
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
