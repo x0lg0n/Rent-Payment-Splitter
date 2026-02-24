@@ -1,4 +1,4 @@
-import { type FormEvent } from "react";
+import { type FormEvent, useId } from "react";
 import { Loader2, SendHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +23,9 @@ export function PaymentFormCard({
   onAmountChange,
   onSubmit,
 }: PaymentFormCardProps) {
+  const recipientId = useId();
+  const amountId = useId();
+
   return (
     <Card id="payment" className="border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/5">
       <CardHeader>
@@ -32,16 +35,26 @@ export function PaymentFormCard({
       <CardContent>
         <form className="space-y-4" onSubmit={onSubmit}>
           <div className="space-y-2">
-            <p className="text-sm font-medium">Recipient Address</p>
+            <label htmlFor={recipientId} className="text-sm font-medium">
+              Recipient Address
+            </label>
             <Input
+              id={recipientId}
               value={recipientAddress}
               onChange={(event) => onRecipientChange(event.target.value)}
               placeholder="G..."
+              aria-describedby={`${recipientId}-hint`}
             />
+            <p id={`${recipientId}-hint`} className="text-xs text-muted-foreground">
+              Stellar public key starting with G (56 characters)
+            </p>
           </div>
           <div className="space-y-2">
-            <p className="text-sm font-medium">Amount (XLM)</p>
+            <label htmlFor={amountId} className="text-sm font-medium">
+              Amount (XLM)
+            </label>
             <Input
+              id={amountId}
               type="text"
               inputMode="decimal"
               value={amount}

@@ -44,14 +44,21 @@ export function TransactionHistoryCard({
                 </div>
 
                 <div className="mt-2 space-y-1 text-sm">
-                  <p>
-                    <span className="text-muted-foreground">From:</span> {tx.from}
+                  <p className="truncate" title={tx.from}>
+                    <span className="text-muted-foreground">From:</span>{" "}
+                    <span className="font-mono text-xs">
+                      {tx.from.slice(0, 6)}...{tx.from.slice(-6)}
+                    </span>
                   </p>
-                  <p>
-                    <span className="text-muted-foreground">To:</span> {tx.to}
+                  <p className="truncate" title={tx.to}>
+                    <span className="text-muted-foreground">To:</span>{" "}
+                    <span className="font-mono text-xs">
+                      {tx.to.slice(0, 6)}...{tx.to.slice(-6)}
+                    </span>
                   </p>
                   <p className="break-all">
-                    <span className="text-muted-foreground">Hash:</span> {tx.hash}
+                    <span className="text-muted-foreground">Hash:</span>{" "}
+                    <span className="font-mono text-xs">{tx.hash}</span>
                   </p>
                 </div>
 

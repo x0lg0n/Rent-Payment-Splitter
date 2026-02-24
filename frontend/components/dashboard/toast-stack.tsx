@@ -17,10 +17,16 @@ interface ToastStackProps {
 
 export function ToastStack({ toasts, onRemove }: ToastStackProps) {
   return (
-    <div className="pointer-events-none fixed right-4 top-16 z-[70] flex w-[min(92vw,360px)] flex-col gap-2">
+    <div
+      aria-live="polite"
+      aria-label="Notifications"
+      role="status"
+      className="pointer-events-none fixed right-4 top-16 z-[70] flex w-[min(92vw,360px)] flex-col gap-2"
+    >
       {toasts.map((toast) => (
         <Card
           key={toast.id}
+          role="alert"
           className={`pointer-events-auto border ${
             toast.level === "error"
               ? "border-amber-400/50 bg-amber-50/90 dark:border-amber-500/50 dark:bg-amber-950/70"
@@ -37,6 +43,7 @@ export function ToastStack({ toasts, onRemove }: ToastStackProps) {
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6"
+                aria-label="Dismiss notification"
                 onClick={() => onRemove(toast.id)}
               >
                 <X className="h-3.5 w-3.5" />

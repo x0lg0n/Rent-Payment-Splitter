@@ -16,7 +16,7 @@ export function WalletStatusBanner({
   walletError,
 }: WalletStatusBannerProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" role="status" aria-live="polite">
       <div className="flex flex-wrap items-center gap-2">
         <Badge
           className={

@@ -26,7 +26,7 @@ export function FeaturesSection() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Core Features</h2>
         <Badge className="border-0 bg-[var(--brand-soft)] text-[var(--brand)] dark:bg-white/10 dark:text-white">
-          Built with shadcn/ui
+          Level 1
         </Badge>
       </div>
       <div className="grid gap-4 md:grid-cols-3">

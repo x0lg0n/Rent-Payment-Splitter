@@ -28,10 +28,14 @@ export function BalanceCard({
         <CardDescription>Connected testnet wallet balance</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-xl bg-muted/60 p-4">
+        <div className="rounded-xl bg-muted/60 p-4" aria-live="polite" aria-atomic="true">
           <p className="text-sm text-muted-foreground">Available XLM</p>
           <p className="text-4xl font-black tracking-tight">
-            {isRefreshing ? "Loading..." : `${(balance ?? 0).toFixed(2)} XLM`}
+            {isRefreshing
+              ? "Loading..."
+              : balance === null
+                ? "-- XLM"
+                : `${balance.toFixed(2)} XLM`}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             {lastUpdated
