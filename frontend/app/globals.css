@@ -86,6 +86,9 @@
 }
 
 .dark {
+  --brand: #185adb;
+  --brand-strong: #114ac2;
+  --brand-soft: #1a3a5c;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

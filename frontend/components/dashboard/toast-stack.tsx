@@ -26,7 +26,7 @@ export function ToastStack({ toasts, onRemove }: ToastStackProps) {
       {toasts.map((toast) => (
         <Card
           key={toast.id}
-          role="alert"
+          role={toast.level === "error" ? "alert" : undefined}
           className={`pointer-events-auto border ${
             toast.level === "error"
               ? "border-amber-400/50 bg-amber-50/90 dark:border-amber-500/50 dark:bg-amber-950/70"

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Wallet } from "lucide-react";
+import { LogOut, Menu, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { connectFreighter, getFreighterSession } from "@/lib/wallet/freighter";
 
 const navItems = [
   { label: "Features", href: "#features" },
@@ -14,6 +15,41 @@ const navItems = [
 
 export function LandingHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  // Restore session on mount
+  useEffect(() => {
+    const restore = async () => {
+      try {
+        const session = await getFreighterSession();
+        if (session) setWalletAddress(session.address);
+      } catch {
+        /* silently ignore */
+      }
+    };
+    void restore();
+  }, []);
+
+  const handleConnect = useCallback(async () => {
+    setIsConnecting(true);
+    try {
+      const session = await connectFreighter();
+      setWalletAddress(session.address);
+    } catch {
+      /* connection failed — user sees no change */
+    } finally {
+      setIsConnecting(false);
+    }
+  }, []);
+
+  const handleDisconnect = useCallback(() => {
+    setWalletAddress(null);
+  }, []);
+
+  const shortAddress = walletAddress
+    ? `${walletAddress.slice(0, 4)}…${walletAddress.slice(-4)}`
+    : null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/35 bg-white/80 backdrop-blur-md dark:border-white/10 dark:bg-black/35">
@@ -51,9 +87,24 @@ export function LandingHeader() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <Button asChild className="hidden bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)] md:inline-flex">
-            <Link href="/dashboard">Open Dashboard</Link>
-          </Button>
+
+          {/* Desktop CTA */}
+          {walletAddress ? (
+            <Button
+              onClick={handleDisconnect}
+              className="hidden gap-2 bg-destructive text-white hover:bg-destructive/90 md:inline-flex"
+            >
+              Disconnect
+            </Button>
+          ) : (
+            <Button
+              onClick={handleConnect}
+              disabled={isConnecting}
+              className="hidden bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)] md:inline-flex"
+            >
+              {isConnecting ? "Connecting…" : "Connect Wallet"}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -70,9 +121,23 @@ export function LandingHeader() {
                 {item.label}
               </a>
             ))}
-            <Button asChild className="mt-1 bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)]">
-              <Link href="/dashboard">Open Dashboard</Link>
-            </Button>
+
+            {walletAddress ? (
+              <Button
+                onClick={() => { handleDisconnect(); setMobileMenuOpen(false); }}
+                className="mt-1 gap-2 bg-destructive text-white hover:bg-destructive/90"
+              >
+                Disconnect
+              </Button>
+            ) : (
+              <Button
+                onClick={() => { void handleConnect(); setMobileMenuOpen(false); }}
+                disabled={isConnecting}
+                className="mt-1 bg-[var(--brand)] text-white hover:bg-[var(--brand-strong)]"
+              >
+                {isConnecting ? "Connecting…" : "Connect Wallet"}
+              </Button>
+            )}
           </div>
         </nav>
       )}
