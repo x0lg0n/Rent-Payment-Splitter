@@ -1,9 +1,8 @@
-export const STELLAR_TESTNET_PASSPHRASE =
-  "Test SDF Network ; September 2015";
-export const STELLAR_MAINNET_PASSPHRASE =
-  "Public Global Stellar Network ; September 2015";
+import { STELLAR_CONFIG } from "@/lib/config";
 
-export const HORIZON_TESTNET_URL = "https://horizon-testnet.stellar.org";
+export const STELLAR_TESTNET_PASSPHRASE = STELLAR_CONFIG.testnetPassphrase;
+export const STELLAR_MAINNET_PASSPHRASE = STELLAR_CONFIG.mainnetPassphrase;
+export const HORIZON_TESTNET_URL = STELLAR_CONFIG.horizonUrl;
 
 export const isTestnetNetwork = (network: string | null | undefined) => {
   if (!network) return false;
