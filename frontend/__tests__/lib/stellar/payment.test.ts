@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isValidXlmAmount } from "@/lib/stellar/payment";
+import { isValidXlmAmount, isValidStellarAddress } from "@/lib/stellar/payment";
 
 /**
  * Pure-function tests for XLM amount & address validation.
@@ -8,6 +8,35 @@ import { isValidXlmAmount } from "@/lib/stellar/payment";
  * from the Stellar SDK, so we just smoke-test it here rather than re-testing
  * the SDK's own logic.
  */
+
+/* ------------------------------------------------------------------ */
+/*  isValidStellarAddress (smoke-test)                                */
+/* ------------------------------------------------------------------ */
+describe("isValidStellarAddress", () => {
+  it("delegates to StrKey.isValidEd25519PublicKey (smoke test)", () => {
+    // Smoke test: verify the function properly validates Stellar public keys
+    // The actual validation logic is in the Stellar SDK's StrKey module
+    // This test just ensures our wrapper is wired up correctly
+
+    // Should reject clearly invalid inputs
+    expect(isValidStellarAddress("")).toBe(false);
+    expect(isValidStellarAddress("invalid")).toBe(false);
+    expect(isValidStellarAddress("123456")).toBe(false);
+  });
+
+  it("rejects secret keys (starting with S)", () => {
+    // Secret keys start with 'S' and should be rejected
+    expect(
+      isValidStellarAddress("SBYWQVWQK72DWPZHDSVKZVMQWTRB5GFVGXDUGAAFUBZN75B2DNRQGG2")
+    ).toBe(false);
+  });
+
+  it("rejects addresses with invalid length", () => {
+    // Valid addresses are exactly 56 characters
+    expect(isValidStellarAddress("G")).toBe(false);
+    expect(isValidStellarAddress("GB".padEnd(60, "A"))).toBe(false);
+  });
+});
 
 /* ------------------------------------------------------------------ */
 /*  isValidXlmAmount                                                   */

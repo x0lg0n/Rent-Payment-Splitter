@@ -60,7 +60,11 @@ export function PaymentFormCard({
               value={amount}
               onChange={(event) => onAmountChange(event.target.value)}
               placeholder="0.00"
+              aria-describedby={`${amountId}-hint`}
             />
+            <p id={`${amountId}-hint`} className="text-xs text-muted-foreground">
+              Positive number up to 7 decimal places
+            </p>
           </div>
           <Button
             type="submit"
