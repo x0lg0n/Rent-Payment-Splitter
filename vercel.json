@@ -3,10 +3,6 @@
   "outputDirectory": "frontend/.next",
   "devCommand": "cd frontend && pnpm dev",
   "installCommand": "pnpm install --recursive",
-  "projectSettings": {
-    "framework": "nextjs",
-    "sourceFilesOutsideRootDirectory": true
-  },
   "env": {
     "NEXT_PUBLIC_STELLAR_NETWORK": "@NEXT_PUBLIC_STELLAR_NETWORK",
     "NEXT_PUBLIC_HORIZON_URL": "@NEXT_PUBLIC_HORIZON_URL",
