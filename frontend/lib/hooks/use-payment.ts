@@ -5,7 +5,10 @@ import {
   isValidStellarAddress,
   isValidXlmAmount,
   sendTestnetXlmPayment,
+  validateAmountAgainstBalance,
+  checkAccountExists,
 } from "@/lib/stellar/payment";
+import { rateLimiters } from "@/lib/utils/rate-limit";
 import type { TransactionRecord } from "@/lib/types/transaction";
 import type { ToastLevel } from "@/components/dashboard/toast-stack";
 
@@ -31,6 +34,8 @@ export function usePayment({
   const [isSendingPayment, setIsSendingPayment] = useState(false);
   const [paymentSuccessHash, setPaymentSuccessHash] = useState<string | null>(null);
   const [transactions, setTransactions] = useState<TransactionRecord[]>([]);
+  const [isCheckingRecipient, setIsCheckingRecipient] = useState(false);
+  const [recipientExists, setRecipientExists] = useState<boolean | null>(null);
 
   const historyStorageKey = useMemo(() => {
     if (!walletAddress) return null;
@@ -62,6 +67,31 @@ export function usePayment({
     localStorage.setItem(historyStorageKey, JSON.stringify(transactions));
   }, [historyStorageKey, transactions]);
 
+  // Check if recipient account exists (debounced)
+  useEffect(() => {
+    const cleanRecipient = recipientAddress.trim();
+    
+    if (!cleanRecipient || !isValidStellarAddress(cleanRecipient)) {
+      setRecipientExists(null);
+      setIsCheckingRecipient(false);
+      return;
+    }
+
+    setIsCheckingRecipient(true);
+    const timeoutId = setTimeout(async () => {
+      try {
+        const exists = await checkAccountExists(cleanRecipient);
+        setRecipientExists(exists);
+      } catch {
+        setRecipientExists(null);
+      } finally {
+        setIsCheckingRecipient(false);
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [recipientAddress]);
+
   const clearTransactions = useCallback(() => {
     setTransactions([]);
   }, []);
@@ -82,6 +112,7 @@ export function usePayment({
       const cleanRecipient = recipientAddress.trim();
       const cleanAmount = paymentAmount.trim();
 
+      // Validate recipient address
       if (!isValidStellarAddress(cleanRecipient)) {
         pushToast(
           "Invalid recipient address",
@@ -90,44 +121,81 @@ export function usePayment({
         return;
       }
 
-      if (!isValidXlmAmount(cleanAmount)) {
+      // Check for self-send
+      if (cleanRecipient === walletAddress) {
         pushToast(
-          "Invalid amount",
-          "Amount must be a positive number with up to 7 decimals.",
+          "Cannot send to yourself",
+          "Please use a different recipient address.",
         );
         return;
       }
 
-      if (walletBalance !== null && Number(cleanAmount) > walletBalance) {
+      // Validate amount
+      if (!isValidXlmAmount(cleanAmount)) {
         pushToast(
-          "Insufficient balance",
-          `You have ${walletBalance.toFixed(2)} XLM, but tried to send ${Number(cleanAmount).toFixed(2)} XLM.`,
+          "Invalid amount",
+          "Amount must be between 0.0000001 and 10,000 XLM.",
+        );
+        return;
+      }
+
+      // Validate amount against balance with fees
+      const balanceValidation = validateAmountAgainstBalance(cleanAmount, walletBalance);
+      if (!balanceValidation.valid) {
+        pushToast("Insufficient balance", balanceValidation.error || "Insufficient balance.");
+        return;
+      }
+
+      // Rate limit payment submissions
+      try {
+        await rateLimiters.paymentSubmit.acquire();
+      } catch {
+        pushToast(
+          "Please wait",
+          "Please wait a moment before sending another payment.",
+          "error"
         );
         return;
       }
 
       setIsSendingPayment(true);
       try {
-        const hash = await sendTestnetXlmPayment({
+        const result = await sendTestnetXlmPayment({
           sourceAddress: walletAddress,
           destinationAddress: cleanRecipient,
           amount: cleanAmount,
         });
 
         const tx: TransactionRecord = {
-          id: `${Date.now()}-${hash.slice(0, 6)}`,
-          hash,
+          id: `${Date.now()}-${result.hash.slice(0, 6)}`,
+          hash: result.hash,
           from: walletAddress,
           to: cleanRecipient,
           amount: cleanAmount,
           network: "testnet",
           createdAt: new Date().toISOString(),
+          confirmed: result.confirmed,
         };
+        
         setTransactions((prev) => [tx, ...prev]);
-        setPaymentSuccessHash(hash);
-        setRecipientAddress("");
-        setPaymentAmount("");
-        await refreshBalance(walletAddress, walletNetwork);
+        
+        if (result.confirmed) {
+          setPaymentSuccessHash(result.hash);
+          setRecipientAddress("");
+          setPaymentAmount("");
+          pushToast(
+            "Payment successful",
+            `Transaction confirmed on ledger ${result.ledger}`,
+            "success"
+          );
+          await refreshBalance(walletAddress, walletNetwork);
+        } else {
+          pushToast(
+            "Payment submitted",
+            "Transaction submitted but not yet confirmed. Check the explorer for status.",
+            "success"
+          );
+        }
       } catch (error) {
         const message =
           error instanceof Error
@@ -144,7 +212,6 @@ export function usePayment({
       recipientAddress,
       paymentAmount,
       walletBalance,
-      walletNetwork,
       pushToast,
       refreshBalance,
     ],
@@ -165,6 +232,8 @@ export function usePayment({
     isSendingPayment,
     paymentSuccessHash,
     transactions,
+    isCheckingRecipient,
+    recipientExists,
     setRecipientAddress,
     setPaymentAmount,
     setPaymentSuccessHash,

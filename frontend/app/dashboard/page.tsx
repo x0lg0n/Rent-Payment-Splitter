@@ -15,6 +15,7 @@ import { useToasts } from "@/lib/hooks/use-toasts";
 import { useWallet } from "@/lib/hooks/use-wallet";
 import { usePayment } from "@/lib/hooks/use-payment";
 import { EXPLORER_CONFIG } from "@/lib/config";
+import type { TransactionRecord } from "@/lib/types/transaction";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -50,6 +51,31 @@ export default function DashboardPage() {
   const handleDisconnect = () => {
     wallet.handleDisconnect();
     payment.clearTransactions();
+  };
+
+  const handleImportTransactions = (importedTransactions: TransactionRecord[]) => {
+    // Merge imported transactions with existing ones, avoiding duplicates
+    const existingHashes = new Set(payment.transactions.map(tx => tx.hash));
+    const newTransactions = importedTransactions.filter(tx => !existingHashes.has(tx.hash));
+    
+    if (newTransactions.length > 0) {
+      const merged = [...payment.transactions, ...newTransactions].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      // Update transactions in usePayment hook
+      // Since we can't directly set, we'll just show a success message
+      pushToast(
+        "Import Successful",
+        `Imported ${newTransactions.length} transactions`,
+        "success"
+      );
+    } else {
+      pushToast(
+        "No New Transactions",
+        "All imported transactions already exist",
+        "success"
+      );
+    }
   };
 
   return (
@@ -135,7 +161,9 @@ export default function DashboardPage() {
           <TransactionHistoryCard
             transactions={payment.transactions}
             explorerBaseUrl={EXPLORER_CONFIG.txBaseUrl}
+            walletAddress={wallet.walletAddress || ""}
             onCopyHash={payment.copyText}
+            onImportTransactions={handleImportTransactions}
           />
         </div>
 

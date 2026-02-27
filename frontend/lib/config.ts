@@ -5,6 +5,15 @@
  * falling back to sensible defaults for Stellar testnet.
  */
 
+// Validate environment on module load
+import { validateEnv, getConfig } from "@/lib/config-schema";
+
+// Run validation immediately
+const envResult = validateEnv();
+if (!envResult.valid) {
+  console.warn("Environment validation warning:", envResult.error);
+}
+
 export const STELLAR_CONFIG = {
   /** Horizon API endpoint */
   horizonUrl:
@@ -16,6 +25,9 @@ export const STELLAR_CONFIG = {
 
   /** Stellar mainnet passphrase */
   mainnetPassphrase: "Public Global Stellar Network ; September 2015",
+  
+  /** Network type */
+  network: (process.env.NEXT_PUBLIC_STELLAR_NETWORK ?? "testnet") as "testnet" | "mainnet",
 } as const;
 
 export const EXPLORER_CONFIG = {
@@ -39,4 +51,23 @@ export const APP_CONFIG = {
 
   /** localStorage key prefix */
   storagePrefix: "splitrent",
+  
+  /** Feature flags */
+  enableMainnet: process.env.NEXT_PUBLIC_ENABLE_MAINNET === "true",
+  enableAnalytics: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true",
 } as const;
+
+/**
+ * Check if mainnet is enabled
+ */
+export const isMainnetEnabled = (): boolean => APP_CONFIG.enableMainnet;
+
+/**
+ * Check if analytics is enabled
+ */
+export const isAnalyticsEnabled = (): boolean => APP_CONFIG.enableAnalytics;
+
+/**
+ * Get the current network
+ */
+export const getCurrentNetwork = (): "testnet" | "mainnet" => STELLAR_CONFIG.network;

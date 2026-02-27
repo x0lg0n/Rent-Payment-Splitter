@@ -6,4 +6,6 @@ export interface TransactionRecord {
   amount: string;
   network: "testnet";
   createdAt: string;
+  confirmed?: boolean;
+  ledger?: number;
 }

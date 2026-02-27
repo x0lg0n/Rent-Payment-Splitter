@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchTestnetXlmBalance } from "@/lib/stellar/horizon";
 import { isMainnetNetwork, isTestnetNetwork } from "@/lib/stellar/network";
 import { connectFreighter, getFreighterSession } from "@/lib/wallet/freighter";
@@ -20,6 +20,11 @@ export function useWallet({ pushToast }: UseWalletOptions) {
   const [isRefreshingBalance, setIsRefreshingBalance] = useState(false);
   const [walletError, setWalletError] = useState<string | null>(null);
 
+  // AbortController for canceling pending balance fetch requests
+  const abortControllerRef = useRef<AbortController | null>(null);
+  // Ref to track if we should skip the next balance refresh (prevents race conditions)
+  const skipNextRefreshRef = useRef(false);
+
   const walletOnTestnet = isTestnetNetwork(walletNetwork);
   const walletOnMainnet = isMainnetNetwork(walletNetwork);
 
@@ -30,17 +35,39 @@ export function useWallet({ pushToast }: UseWalletOptions) {
 
   const refreshBalance = useCallback(
     async (address: string, network: string | null) => {
+      // Cancel any pending balance fetch request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create new AbortController for this request
+      abortControllerRef.current = new AbortController();
+      const { signal } = abortControllerRef.current;
+
       if (!isTestnetNetwork(network)) {
         setWalletBalance(null);
         return;
       }
 
+      // Check if this refresh should be skipped (prevents duplicate requests)
+      if (skipNextRefreshRef.current) {
+        skipNextRefreshRef.current = false;
+        return;
+      }
+
       setIsRefreshingBalance(true);
+      setWalletError(null);
+      
       try {
-        const nextBalance = await fetchTestnetXlmBalance(address);
+        const nextBalance = await fetchTestnetXlmBalance(address, signal);
         setWalletBalance(nextBalance);
         setLastBalanceUpdated(new Date());
-      } catch {
+      } catch (error) {
+        // Ignore abort errors
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
+        
         setWalletError(
           "Unable to fetch testnet balance. Make sure your account exists and is funded on testnet.",
         );
@@ -70,13 +97,21 @@ export function useWallet({ pushToast }: UseWalletOptions) {
   useEffect(() => {
     if (!walletAddress || !walletOnTestnet) return;
 
+    // Initial refresh
     void refreshBalance(walletAddress, walletNetwork);
+    
     const timer = window.setInterval(() => {
       void refreshBalance(walletAddress, walletNetwork);
     }, APP_CONFIG.balanceRefreshInterval);
 
-    return () => window.clearInterval(timer);
-  }, [refreshBalance, walletAddress, walletNetwork, walletOnTestnet]);
+    // Cleanup: abort pending requests and clear interval
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      window.clearInterval(timer);
+    };
+  }, [walletAddress, walletNetwork, walletOnTestnet, refreshBalance]);
 
   const handleConnect = async () => {
     setWalletError(null);
@@ -112,12 +147,26 @@ export function useWallet({ pushToast }: UseWalletOptions) {
   };
 
   const handleDisconnect = () => {
+    // Abort any pending requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
     setWalletAddress(null);
     setWalletNetwork(null);
     setWalletBalance(null);
     setLastBalanceUpdated(null);
     setWalletError(null);
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   return {
     walletAddress,

@@ -5,27 +5,48 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TransactionRecord } from "@/lib/types/transaction";
+import { TransactionExport } from "@/components/dashboard/transaction-export";
 import { useState } from "react";
 
 interface TransactionHistoryCardProps {
   transactions: TransactionRecord[];
   explorerBaseUrl: string;
+  walletAddress: string;
   onCopyHash: (hash: string) => void;
+  onImportTransactions?: (transactions: TransactionRecord[]) => void;
 }
 
 export function TransactionHistoryCard({
   transactions,
   explorerBaseUrl,
+  walletAddress,
   onCopyHash,
+  onImportTransactions,
 }: TransactionHistoryCardProps) {
   const [expandedTx, setExpandedTx] = useState<string | null>(null);
+
+  const handleImportSuccess = (importedTransactions: TransactionRecord[]) => {
+    onImportTransactions?.(importedTransactions);
+  };
+
   return (
     <Card id="history" className="border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/5">
       <CardHeader>
-        <CardTitle>Transaction History</CardTitle>
-        <CardDescription>
-          Recent payments sent from this app. Verify each hash on testnet explorer.
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Transaction History</CardTitle>
+            <CardDescription>
+              Recent payments sent from this app. Verify each hash on testnet explorer.
+            </CardDescription>
+          </div>
+          {transactions.length > 0 && (
+            <TransactionExport
+              transactions={transactions}
+              walletAddress={walletAddress}
+              onImportSuccess={handleImportSuccess}
+            />
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {transactions.length === 0 ? (
@@ -47,6 +68,11 @@ export function TransactionHistoryCard({
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge variant="secondary">{tx.amount} XLM</Badge>
                         <Badge variant="outline">Testnet</Badge>
+                        {tx.confirmed !== undefined && (
+                          <Badge variant={tx.confirmed ? "default" : "secondary"}>
+                            {tx.confirmed ? "Confirmed" : "Pending"}
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <p className="text-xs text-muted-foreground">
@@ -78,24 +104,40 @@ export function TransactionHistoryCard({
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground mb-1">Transaction Hash</p>
-                          <p className="break-all font-mono text-xs text-[var(--brand)]">{tx.hash}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="truncate font-mono text-xs" title={tx.hash}>
+                              {tx.hash}
+                            </p>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => onCopyHash(tx.hash)}
+                              className="h-6 px-2 text-xs"
+                            >
+                              Copy
+                            </Button>
+                            <a
+                              href={`${explorerBaseUrl}/${tx.hash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-6 px-2 text-xs"
+                              >
+                                <ExternalLink className="mr-1 h-3 w-3" />
+                                Verify
+                              </Button>
+                            </a>
+                          </div>
                         </div>
-                      </div>
-
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <Button variant="outline" size="sm" onClick={() => onCopyHash(tx.hash)}>
-                          Copy Hash
-                        </Button>
-                        <Button asChild size="sm" variant="outline">
-                          <a
-                            href={`${explorerBaseUrl}/${tx.hash}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Verify
-                            <ExternalLink className="ml-2 h-3.5 w-3.5" />
-                          </a>
-                        </Button>
+                        {tx.ledger && (
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Ledger</p>
+                            <p className="text-xs font-mono">{tx.ledger}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
