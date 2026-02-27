@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Space_Grotesk } from "next/font/google";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
 import "./globals.css";
+import { initSentry } from "@/lib/utils/sentry";
+import { initPostHog } from "@/lib/utils/posthog";
+
+// Initialize at the top level
+if (typeof window !== "undefined") {
+  initSentry();
+  initPostHog();
+}
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-sans",
@@ -44,7 +53,9 @@ export default function RootLayout({
       <body
         className={`${geistMono.variable} antialiased`}
       >
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </body>
     </html>
   );
