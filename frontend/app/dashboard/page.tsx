@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,22 +11,27 @@ import { PaymentFormCard } from "@/components/dashboard/payment-form-card";
 import { ToastStack } from "@/components/dashboard/toast-stack";
 import { PaymentSuccessDialog } from "@/components/dashboard/payment-success-dialog";
 import { TransactionHistoryCard } from "@/components/dashboard/transaction-history-card";
+import { EscrowBanner } from "@/components/escrow/escrow-banner";
 import { useToasts } from "@/lib/hooks/use-toasts";
 import { useWallet } from "@/lib/hooks/use-wallet";
 import { usePayment } from "@/lib/hooks/use-payment";
+import { useEscrowStore } from "@/lib/store";
 import { EXPLORER_CONFIG } from "@/lib/config";
 import type { TransactionRecord } from "@/lib/types/transaction";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { toasts, pushToast, removeToast } = useToasts();
+  const paymentFormRef = useRef<HTMLDivElement>(null);
+  
+  // Use Zustand for escrow state
+  const { escrows, addEscrow, updateEscrow } = useEscrowStore();
 
   const wallet = useWallet({ pushToast });
 
   // Redirect to home if wallet is not connected
   useEffect(() => {
     if (wallet.walletAddress === null && !wallet.isConnectingWallet) {
-      // Small delay to avoid flickering
       const timer = setTimeout(() => {
         pushToast(
           "Wallet Required",
@@ -54,16 +59,10 @@ export default function DashboardPage() {
   };
 
   const handleImportTransactions = (importedTransactions: TransactionRecord[]) => {
-    // Merge imported transactions with existing ones, avoiding duplicates
     const existingHashes = new Set(payment.transactions.map(tx => tx.hash));
     const newTransactions = importedTransactions.filter(tx => !existingHashes.has(tx.hash));
     
     if (newTransactions.length > 0) {
-      const merged = [...payment.transactions, ...newTransactions].sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      // Update transactions in usePayment hook
-      // Since we can't directly set, we'll just show a success message
       pushToast(
         "Import Successful",
         `Imported ${newTransactions.length} transactions`,
@@ -76,6 +75,18 @@ export default function DashboardPage() {
         "success"
       );
     }
+  };
+
+  const scrollToPaymentForm = () => {
+    paymentFormRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  const handleCreateEscrowClick = () => {
+    router.push("/escrow/create");
+  };
+
+  const handleViewAllEscrowsClick = () => {
+    router.push("/escrow");
   };
 
   return (
@@ -119,6 +130,15 @@ export default function DashboardPage() {
           />
         </div>
 
+        {/* NEW: Escrow Banner */}
+        <div className="animate-in fade-in slide-in-from-top-4 duration-700" style={{ animationDelay: "0.35s", animationFillMode: "both" }}>
+          <EscrowBanner
+            activeEscrowsCount={escrows.length}
+            onCreateClick={handleCreateEscrowClick}
+            onViewAllClick={handleViewAllEscrowsClick}
+          />
+        </div>
+
         <div className="grid gap-4 md:grid-cols-2">
           <div
             className="animate-in fade-in slide-in-from-left-4 duration-700"
@@ -141,6 +161,7 @@ export default function DashboardPage() {
           <div
             className="animate-in fade-in slide-in-from-right-4 duration-700"
             style={{ animationDelay: "0.4s", animationFillMode: "both" }}
+            ref={paymentFormRef}
           >
             <PaymentFormCard
               recipientAddress={payment.recipientAddress}
@@ -150,9 +171,20 @@ export default function DashboardPage() {
               onRecipientChange={payment.setRecipientAddress}
               onAmountChange={payment.setPaymentAmount}
               onSubmit={payment.handlePaymentSubmit}
+              walletBalance={wallet.walletBalance}
             />
           </div>
         </div>
+
+        {/* Transaction Statistics */}
+        {payment.transactions.length > 0 && (
+          <div
+            className="animate-in fade-in slide-in-from-bottom-4 duration-700"
+            style={{ animationDelay: "0.45s", animationFillMode: "both" }}
+          >
+            {/* TransactionStatsCard would go here */}
+          </div>
+        )}
 
         <div
           className="animate-in fade-in slide-in-from-bottom-4 duration-700"
@@ -164,6 +196,7 @@ export default function DashboardPage() {
             walletAddress={wallet.walletAddress || ""}
             onCopyHash={payment.copyText}
             onImportTransactions={handleImportTransactions}
+            onScrollToPaymentForm={scrollToPaymentForm}
           />
         </div>
 
