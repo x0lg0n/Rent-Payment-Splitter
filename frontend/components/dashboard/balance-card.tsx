@@ -1,6 +1,7 @@
 import { Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BalanceCardProps {
   balance: number | null;
@@ -30,13 +31,15 @@ export function BalanceCard({
       <CardContent className="space-y-4">
         <div className="rounded-xl bg-muted/60 p-4" aria-live="polite" aria-atomic="true">
           <p className="text-sm text-muted-foreground">Available XLM</p>
-          <p className="text-4xl font-black tracking-tight">
-            {isRefreshing
-              ? "Loading..."
-              : balance === null
-                ? "-- XLM"
-                : `${balance.toFixed(2)} XLM`}
-          </p>
+          
+          {isRefreshing || balance === null ? (
+            <Skeleton className="mt-2 h-12 w-48" />
+          ) : (
+            <p className="text-4xl font-black tracking-tight">
+              {balance.toFixed(2)} XLM
+            </p>
+          )}
+          
           <p className="mt-1 text-xs text-muted-foreground">
             {lastUpdated
               ? `Last updated: ${lastUpdated.toLocaleTimeString()}`
@@ -64,7 +67,12 @@ export function BalanceCard({
           </Card>
         ) : null}
 
-        <Button variant="outline" onClick={onRefresh} disabled={!canRefresh || isRefreshing}>
+        <Button 
+          variant="outline" 
+          onClick={onRefresh} 
+          disabled={!canRefresh || isRefreshing}
+          className="min-h-[44px]"
+        >
           {isRefreshing ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
