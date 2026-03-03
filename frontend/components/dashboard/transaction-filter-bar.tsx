@@ -18,6 +18,8 @@ interface TransactionFilters {
   search: string;
   status: "all" | "confirmed" | "pending";
   sortBy: "date_desc" | "date_asc" | "amount_desc" | "amount_asc";
+  dateFrom: string;
+  dateTo: string;
 }
 
 interface TransactionFilterBarProps {
@@ -33,6 +35,8 @@ export function TransactionFilterBar({
     search: "",
     status: "all",
     sortBy: "date_desc",
+    dateFrom: "",
+    dateTo: "",
   });
 
   const filteredTransactions = useMemo(() => {
@@ -56,6 +60,17 @@ export function TransactionFilterBar({
         if (tx.confirmed === undefined) return false;
         return tx.confirmed === isConfirmed;
       });
+    }
+
+    // Apply date range filter
+    if (filters.dateFrom) {
+      const fromDate = new Date(filters.dateFrom);
+      result = result.filter((tx) => new Date(tx.createdAt) >= fromDate);
+    }
+    if (filters.dateTo) {
+      const toDate = new Date(filters.dateTo);
+      toDate.setHours(23, 59, 59, 999); // Include the entire end date
+      result = result.filter((tx) => new Date(tx.createdAt) <= toDate);
     }
 
     // Apply sorting
@@ -89,54 +104,91 @@ export function TransactionFilterBar({
       search: "",
       status: "all",
       sortBy: "date_desc",
+      dateFrom: "",
+      dateTo: "",
     });
   };
 
   return (
     <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
-      <div className="flex flex-col gap-3 md:flex-row">
-        {/* Search Input */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by address or hash..."
-            value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-            className="pl-9 min-h-[44px]"
-          />
+      <div className="space-y-3">
+        {/* First Row: Search and Filters */}
+        <div className="flex flex-col gap-3 md:flex-row">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by address or hash..."
+              value={filters.search}
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+              className="pl-9 min-h-[44px]"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <Select
+            value={filters.status}
+            onValueChange={(value: any) => setFilters({ ...filters, status: value })}
+          >
+            <SelectTrigger className="w-full md:w-[160px] min-h-[44px]">
+              <Filter className="mr-2 h-4 w-4" />
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Sort By */}
+          <Select
+            value={filters.sortBy}
+            onValueChange={(value: any) => setFilters({ ...filters, sortBy: value })}
+          >
+            <SelectTrigger className="w-full md:w-[180px] min-h-[44px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="date_desc">Newest First</SelectItem>
+              <SelectItem value="date_asc">Oldest First</SelectItem>
+              <SelectItem value="amount_desc">Highest Amount</SelectItem>
+              <SelectItem value="amount_asc">Lowest Amount</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Status Filter */}
-        <Select
-          value={filters.status}
-          onValueChange={(value: any) => setFilters({ ...filters, status: value })}
-        >
-          <SelectTrigger className="w-full md:w-[160px] min-h-[44px]">
-            <Filter className="mr-2 h-4 w-4" />
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="confirmed">Confirmed</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Sort By */}
-        <Select
-          value={filters.sortBy}
-          onValueChange={(value: any) => setFilters({ ...filters, sortBy: value })}
-        >
-          <SelectTrigger className="w-full md:w-[180px] min-h-[44px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="date_desc">Newest First</SelectItem>
-            <SelectItem value="date_asc">Oldest First</SelectItem>
-            <SelectItem value="amount_desc">Highest Amount</SelectItem>
-            <SelectItem value="amount_asc">Lowest Amount</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Second Row: Date Range */}
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          <div className="flex items-center gap-2 flex-1">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">Date From:</span>
+            <Input
+              type="date"
+              value={filters.dateFrom}
+              onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
+              className="min-h-[44px] max-w-[180px]"
+            />
+            <span className="text-sm text-muted-foreground">to</span>
+            <Input
+              type="date"
+              value={filters.dateTo}
+              onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
+              className="min-h-[44px] max-w-[180px]"
+            />
+          </div>
+          
+          {(filters.dateFrom || filters.dateTo) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setFilters({ ...filters, dateFrom: "", dateTo: "" })}
+              className="h-11"
+            >
+              <X className="h-4 w-4" />
+              Clear Dates
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Active Filters & Results Count */}

@@ -57,7 +57,7 @@ export function BalanceCard({
                   href={friendbotUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[var(--brand)] underline underline-offset-4"
+                  className="text-[--brand] underline underline-offset-4"
                 >
                   Friendbot
                 </a>{" "}
@@ -71,7 +71,7 @@ export function BalanceCard({
           variant="outline" 
           onClick={onRefresh} 
           disabled={!canRefresh || isRefreshing}
-          className="min-h-[44px]"
+          className="min-h-11"
         >
           {isRefreshing ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

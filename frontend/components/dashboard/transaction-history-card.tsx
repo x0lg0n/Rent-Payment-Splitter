@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, ChevronDown, FileText, ArrowRight } from "lucide-react";
+import { ExternalLink, ChevronDown, ChevronLeft, ChevronRight, FileText, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { TransactionExport } from "@/components/dashboard/transaction-export";
 import { TransactionFilterBar } from "@/components/dashboard/transaction-filter-bar";
 import type { TransactionRecord } from "@/lib/types/transaction";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 interface TransactionHistoryCardProps {
   transactions: TransactionRecord[];
@@ -19,6 +19,8 @@ interface TransactionHistoryCardProps {
   onScrollToPaymentForm?: () => void;
 }
 
+const TRANSACTIONS_PER_PAGE = 10;
+
 export function TransactionHistoryCard({
   transactions,
   explorerBaseUrl,
@@ -28,14 +30,30 @@ export function TransactionHistoryCard({
   onScrollToPaymentForm,
 }: TransactionHistoryCardProps) {
   const [expandedTx, setExpandedTx] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filteredTransactions, setFilteredTransactions] = useState<TransactionRecord[]>(transactions);
 
-  const handleImportSuccess = (importedTransactions: TransactionRecord[]) => {
-    onImportTransactions?.(importedTransactions);
-  };
+  // Reset to page 1 when transactions change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [transactions]);
+
+  // Paginate transactions
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * TRANSACTIONS_PER_PAGE;
+    const endIndex = startIndex + TRANSACTIONS_PER_PAGE;
+    return filteredTransactions.slice(startIndex, endIndex);
+  }, [filteredTransactions, currentPage]);
+
+  const totalPages = Math.ceil(filteredTransactions.length / TRANSACTIONS_PER_PAGE);
 
   const handleFilteredResultsChange = (filtered: TransactionRecord[]) => {
     setFilteredTransactions(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const handleImportSuccess = (transactions: TransactionRecord[]) => {
+    onImportTransactions?.(transactions);
   };
 
   return (
@@ -80,14 +98,14 @@ export function TransactionHistoryCard({
 
             {/* Transaction List */}
             <div className="space-y-2">
-              {filteredTransactions.length === 0 ? (
+              {paginatedTransactions.length === 0 ? (
                 <div className="rounded-lg border border-dashed p-8 text-center">
                   <p className="text-muted-foreground">
                     No transactions match your filters
                   </p>
                 </div>
               ) : (
-                filteredTransactions.map((tx) => {
+                paginatedTransactions.map((tx) => {
                   const isExpanded = expandedTx === tx.id;
                   return (
                     <div
@@ -100,16 +118,16 @@ export function TransactionHistoryCard({
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex flex-wrap items-center gap-2">
-                            <Badge variant="secondary" className="min-h-[28px]">
+                            <Badge variant="secondary" className="min-h-7">
                               {tx.amount} XLM
                             </Badge>
-                            <Badge variant="outline" className="min-h-[28px]">
+                            <Badge variant="outline" className="min-h-7">
                               Testnet
                             </Badge>
                             {tx.confirmed !== undefined && (
                               <Badge 
                                 variant={tx.confirmed ? "default" : "secondary"}
-                                className="min-h-[28px]"
+                                className="min-h-7"
                               >
                                 {tx.confirmed ? "Confirmed" : "Pending"}
                               </Badge>
@@ -149,11 +167,12 @@ export function TransactionHistoryCard({
                                 <p className="truncate font-mono text-xs" title={tx.hash}>
                                   {tx.hash}
                                 </p>
+                                
                                 <Button
-                                  variant="ghost"
+                                  variant="outline"
                                   size="sm"
                                   onClick={() => onCopyHash(tx.hash)}
-                                  className="h-8 min-w-[44px] px-2 text-xs"
+                                  className="h-8 min-w-11 px-2 text-xs"
                                 >
                                   Copy
                                 </Button>
@@ -165,7 +184,7 @@ export function TransactionHistoryCard({
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="h-8 min-w-[44px] px-2 text-xs"
+                                    className="h-8 min-w-11 px-2 text-xs"
                                   >
                                     <ExternalLink className="mr-1 h-3 w-3" />
                                     Verify
@@ -187,6 +206,63 @@ export function TransactionHistoryCard({
                 })
               )}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-4 border-t">
+                <p className="text-xs text-muted-foreground">
+                  Showing {(currentPage - 1) * TRANSACTIONS_PER_PAGE + 1} to {Math.min(currentPage * TRANSACTIONS_PER_PAGE, filteredTransactions.length)} of {filteredTransactions.length} transactions
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                  
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setCurrentPage(pageNum)}
+                          className="w-10 h-10 p-0"
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </CardContent>

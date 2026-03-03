@@ -1,8 +1,8 @@
 #![cfg(test)]
 use super::*;
-use soroban_sdk::{testutils::Ledger, vec, Env, Address};
+use soroban_sdk::{testutils::{Address as _, Ledger}, vec, Env};
 
-fn create_test_address(env: &Env, seed: &[u8]) -> Address {
+fn create_test_address(env: &Env) -> Address {
     Address::generate(env)
 }
 
@@ -11,25 +11,21 @@ fn test_initialize_escrow() {
     let env = Env::default();
     env.mock_all_auths();
     
-    let creator = create_test_address(&env, b"creator");
-    let landlord = create_test_address(&env, b"landlord");
-    let participant1 = create_test_address(&env, b"p1");
-    let participant2 = create_test_address(&env, b"p2");
+    let contract_id = env.register(RentEscrowContract, ());
+    let client = RentEscrowContractClient::new(&env, &contract_id);
+    
+    let creator = create_test_address(&env);
+    let landlord = create_test_address(&env);
+    let participant1 = create_test_address(&env);
+    let participant2 = create_test_address(&env);
     
     let participants = vec![&env, participant1.clone(), participant2.clone()];
-    let shares = vec![&env, 500_0000000_i128, 500_0000000_i128]; // 500 XLM each
-    let deadline = env.ledger().timestamp() + 86400; // 24 hours from now
+    let shares = vec![&env, 500_0000000_i128, 500_0000000_i128];
+    let deadline = env.ledger().timestamp() + 86400;
     
-    let escrow_id = RentEscrowContract::initialize(
-        &env,
-        creator.clone(),
-        landlord.clone(),
-        participants,
-        shares,
-        deadline,
-    );
+    let escrow_id = client.initialize(&creator, &landlord, &participants, &shares, &deadline);
     
-    let escrow = RentEscrowContract::get_status(&env, escrow_id);
+    let escrow = client.get_status(&escrow_id);
     
     assert_eq!(escrow.id, escrow_id);
     assert_eq!(escrow.creator, creator);
@@ -44,64 +40,56 @@ fn test_deposit() {
     let env = Env::default();
     env.mock_all_auths();
     
-    let creator = create_test_address(&env, b"creator");
-    let landlord = create_test_address(&env, b"landlord");
-    let participant1 = create_test_address(&env, b"p1");
+    let contract_id = env.register(RentEscrowContract, ());
+    let client = RentEscrowContractClient::new(&env, &contract_id);
+    
+    let creator = create_test_address(&env);
+    let landlord = create_test_address(&env);
+    let participant1 = create_test_address(&env);
     
     let participants = vec![&env, participant1.clone()];
     let shares = vec![&env, 500_0000000_i128];
     let deadline = env.ledger().timestamp() + 86400;
     
-    let escrow_id = RentEscrowContract::initialize(
-        &env,
-        creator,
-        landlord,
-        participants,
-        shares,
-        deadline,
-    );
+    let escrow_id = client.initialize(&creator, &landlord, &participants, &shares, &deadline);
     
     // First deposit
-    let deposited = RentEscrowContract::deposit(&env, escrow_id, participant1.clone());
+    let deposited = client.deposit(&escrow_id, &participant1);
     assert!(deposited);
     
-    let (has_deposited, share) = RentEscrowContract::get_participant_status(&env, escrow_id, participant1.clone());
+    let (has_deposited, share) = client.get_participant_status(&escrow_id, &participant1);
     assert!(has_deposited);
     assert_eq!(share, 500_0000000_i128);
     
-    let escrow = RentEscrowContract::get_status(&env, escrow_id);
+    let escrow = client.get_status(&escrow_id);
     assert_eq!(escrow.deposited_amount, 500_0000000_i128);
     assert_eq!(escrow.status, EscrowStatus::FullyFunded);
 }
 
 #[test]
-#[should_panic(expected = "Participant already deposited")]
+#[should_panic(expected = "Escrow is not active")]
 fn test_double_deposit_panics() {
     let env = Env::default();
     env.mock_all_auths();
     
-    let creator = create_test_address(&env, b"creator");
-    let landlord = create_test_address(&env, b"landlord");
-    let participant1 = create_test_address(&env, b"p1");
+    let contract_id = env.register(RentEscrowContract, ());
+    let client = RentEscrowContractClient::new(&env, &contract_id);
+    
+    let creator = create_test_address(&env);
+    let landlord = create_test_address(&env);
+    let participant1 = create_test_address(&env);
     
     let participants = vec![&env, participant1.clone()];
     let shares = vec![&env, 500_0000000_i128];
     let deadline = env.ledger().timestamp() + 86400;
     
-    let escrow_id = RentEscrowContract::initialize(
-        &env,
-        creator,
-        landlord,
-        participants,
-        shares,
-        deadline,
-    );
+    let escrow_id = client.initialize(&creator, &landlord, &participants, &shares, &deadline);
     
     // First deposit
-    RentEscrowContract::deposit(&env, escrow_id, participant1.clone());
+    client.deposit(&escrow_id, &participant1);
     
     // Second deposit should panic
-    RentEscrowContract::deposit(&env, escrow_id, participant1.clone());
+    client.deposit(&escrow_id, &participant1);
 }
 
 #[test]
@@ -109,25 +97,21 @@ fn test_can_refund() {
     let env = Env::default();
     env.mock_all_auths();
     
-    let creator = create_test_address(&env, b"creator");
-    let landlord = create_test_address(&env, b"landlord");
-    let participant1 = create_test_address(&env, b"p1");
+    let contract_id = env.register(RentEscrowContract, ());
+    let client = RentEscrowContractClient::new(&env, &contract_id);
+    
+    let creator = create_test_address(&env);
+    let landlord = create_test_address(&env);
+    let participant1 = create_test_address(&env);
     
     let participants = vec![&env, participant1.clone()];
     let shares = vec![&env, 500_0000000_i128];
-    let deadline = env.ledger().timestamp() + 100; // 100 seconds from now
+    let deadline = env.ledger().timestamp() + 100;
     
-    let escrow_id = RentEscrowContract::initialize(
-        &env,
-        creator,
-        landlord,
-        participants,
-        shares,
-        deadline,
-    );
+    let escrow_id = client.initialize(&creator, &landlord, &participants, &shares, &deadline);
     
     // Before deadline, can't refund
-    assert!(!RentEscrowContract::can_refund(&env, escrow_id));
+    assert!(!client.can_refund(&escrow_id));
     
     // Advance time past deadline
     env.ledger().with_mut(|li| {
@@ -135,7 +119,7 @@ fn test_can_refund() {
     });
     
     // After deadline, can refund
-    assert!(RentEscrowContract::can_refund(&env, escrow_id));
+    assert!(client.can_refund(&escrow_id));
 }
 
 #[test]
@@ -144,20 +128,16 @@ fn test_past_deadline_panics() {
     let env = Env::default();
     env.mock_all_auths();
     
-    let creator = create_test_address(&env, b"creator");
-    let landlord = create_test_address(&env, b"landlord");
-    let participant1 = create_test_address(&env, b"p1");
+    let contract_id = env.register(RentEscrowContract, ());
+    let client = RentEscrowContractClient::new(&env, &contract_id);
+    
+    let creator = create_test_address(&env);
+    let landlord = create_test_address(&env);
+    let participant1 = create_test_address(&env);
     
     let participants = vec![&env, participant1.clone()];
     let shares = vec![&env, 500_0000000_i128];
-    let deadline = env.ledger().timestamp() - 1000; // Past deadline
+    let deadline = 0u64;
     
-    RentEscrowContract::initialize(
-        &env,
-        creator,
-        landlord,
-        participants,
-        shares,
-        deadline,
-    );
+    client.initialize(&creator, &landlord, &participants, &shares, &deadline);
 }

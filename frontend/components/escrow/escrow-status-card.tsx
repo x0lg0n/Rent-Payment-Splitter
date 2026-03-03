@@ -146,7 +146,7 @@ export function EscrowStatusCard({
           {!isCurrentUserDeposited && onDeposit && (
             <Button onClick={onDeposit} className="flex-1 min-h-[44px]">
               Deposit {formatAmount(
-                escrow.participants.find(p => p.address === currentUserId)?.share_amount || 0n
+                escrow.participants.find(p => p.address === currentUserId)?.share_amount || BigInt(0)
               )} XLM
             </Button>
           )}
