@@ -46,6 +46,14 @@ SplitRent solves the common problem of splitting rent and managing shared expens
 - ✅ Balance display with auto-refresh (30s intervals)
 - ✅ Manual balance refresh functionality
 
+#### Smart Contracts (Soroban)
+- ✅ Escrow contract with full test coverage (28 tests passing)
+- ✅ Create, deposit, release, refund functionality
+- ✅ Dispute resolution system
+- ✅ Multi-participant support
+- ✅ Automated payment distribution
+- ✅ WASM build: 16,242 bytes
+
 #### Payment System
 - ✅ Send XLM payments with validation
 - ✅ Real-time transaction feedback
@@ -189,6 +197,24 @@ graph TB
 - **Smart Contracts**: Soroban (Rust)
 - **SDK**: @stellar/stellar-sdk 14.5.0
 - **Wallet Integration**: @creit.tech/stellar-wallets-kit 2.0.0
+
+stellar contract deploy \
+  --wasm target/wasm32v1-none/release/escrow.wasm \
+  --source-account escrow \
+  --network testnet \
+  --alias escrow_contracts
+ℹ️  Simulating install transaction…
+ℹ️  Signing transaction: 9d395437999bbd034731f3cbe6a2be5c5b1b8148ff70d289e65b28e933b2ac10
+🌎 Submitting install transaction…
+ℹ️  Using wasm hash 1bb75a3a55667aa0c4033c7cfba8e6d5863b5fb29d49b3190e2cfcf4e1f447de
+ℹ️  Simulating deploy transaction…
+ℹ️  Transaction hash is 1e465506275f45c9c7356b935d646ed89a1c10323ca9e5fba43777f122f2a5cc
+🔗 https://stellar.expert/explorer/testnet/tx/1e465506275f45c9c7356b935d646ed89a1c10323ca9e5fba43777f122f2a5cc
+ℹ️  Signing transaction: 1e465506275f45c9c7356b935d646ed89a1c10323ca9e5fba43777f122f2a5cc
+🌎 Submitting deploy transaction…
+🔗 https://lab.stellar.org/r/testnet/contract/CBA5V42PSZBF5EIDTFEVSBPPUWXIT6QNOVHBJM6BBDM4U33JLZ3MOGIC
+✅ Deployed!
+CBA5V42PSZBF5EIDTFEVSBPPUWXIT6QNOVHBJM6BBDM4U33JLZ3MOGIC
 
 ### Supported Wallets
 - Freighter
@@ -408,6 +434,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## 📚 Documentation
 
+### Product & Development
 - **[Product Requirements](docs/PRD.md)** - Detailed product specs
 - **[Roadmap](docs/ROADMAP.md)** - Project timeline and milestones
 - **[Development Guide](docs/DEVELOPMENT.md)** - Complete dev setup and workflow
@@ -416,6 +443,13 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 - **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community guidelines
 - **[Security Policy](SECURITY.md)** - Reporting vulnerabilities
 - **[Changelog](CHANGELOG.md)** - Version history
+
+### Smart Contract Integration
+- **[Integration Quick Start](docs/INTEGRATION-QUICKSTART.md)** - 🚀 Start here for integration
+- **[Integration Plan](docs/ESCROW-INTEGRATION-PLAN.md)** - Complete integration guide
+- **[Service Specification](docs/ESCROW-SERVICE-SPEC.md)** - Technical API spec
+- **[Contract Source](SplitRent/contracts/escrow/src/lib.rs)** - Rust smart contract code
+- **[Contract Tests](SplitRent/contracts/escrow/src/test.rs)** - Test suite (28 tests)
 
 ---
 
