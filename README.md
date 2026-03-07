@@ -1,89 +1,351 @@
 # SplitRent
 
-SplitRent is a Stellar-based rent payment dApp that helps roommates send, track, and verify rent payments on **Stellar Testnet**.
+<div align="center">
 
-Current product status:
-- Level 1: complete (wallet connect, balance, send payment, tx feedback/history).
-- Level 2: in progress (multi-wallet support and escrow contract flow).
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI/CD](https://github.com/x0lg0n/Rent-Payment-Splitter/actions/workflows/ci.yml/badge.svg)](https://github.com/x0lg0n/Rent-Payment-Splitter/actions/workflows/ci.yml)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-blue)](https://stellar.org)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
 
-## What You Can Do Today
+**A Stellar-based rent payment dApp that helps roommates send, track, and verify rent payments on-chain**
 
-- Connect wallet from landing page (`/`) and dashboard (`/dashboard`).
-- See wallet status and network state (testnet/mainnet warning).
-- View XLM balance with auto-refresh (30s) and manual refresh.
-- Send XLM payments with validation and clear error/success feedback.
-- View transaction history and verify each transaction on Stellar Explorer.
-- Use dark/light mode.
+[Features](#features) • [Live Demo](#live-demo) • [Screenshots](#screenshots) • [How It Works](#how-it-works) • [Roadmap](#roadmap) • [Tech Stack](#tech-stack) • [Quick Start](#quick-start)
 
-## Tech Stack
+</div>
 
-- Next.js `16.1.6` (App Router)
-- React `19.2.3`
-- TypeScript `5.x`
-- Tailwind CSS `4.x`
-- shadcn/ui
-- `@stellar/stellar-sdk` `14.5.0`
-- `@stellar/freighter-api` `6.0.1`
-- `@creit.tech/stellar-wallets-kit` `2.0.0`
-- Vitest `4.0.18`
+---
 
-## Routes
+## 📖 Overview
 
-- `/` -> marketing/landing page + wallet CTA
-- `/dashboard` -> wallet status, balance, payment form, transaction history
+SplitRent solves the common problem of splitting rent and managing shared expenses among roommates. Built on Stellar blockchain, it provides transparent, secure, and automated rent payment splitting using smart contracts (Soroban).
 
-## Project Structure
+### ✨ Key Benefits
 
-```text
-Rent Payment Splitter/
-├── frontend/
-│   ├── app/
-│   │   ├── page.tsx
-│   │   └── dashboard/page.tsx
-│   ├── components/
-│   │   ├── landing/
-│   │   ├── dashboard/
-│   │   ├── shared/
-│   │   └── ui/
-│   ├── lib/
-│   │   ├── config.ts
-│   │   ├── hooks/
-│   │   ├── stellar/
-│   │   ├── wallet/
-│   │   └── types/
-│   └── __tests__/
-├── SplitRent/                 # Soroban contract workspace
-└── docs/                      # PRD, plan, stack, todo
+- **Transparent**: All transactions are on-chain and verifiable
+- **Automated**: Automatic rent splitting among roommates
+- **Secure**: Smart contract escrow ensures funds are protected
+- **User-Friendly**: Clean, modern interface with wallet integration
+- **Testnet Ready**: Fully functional on Stellar testnet
+
+---
+
+## 🎯 What's Built & Working Now
+
+### ✅ Completed Features
+
+#### Wallet & Account Management
+- ✅ Multi-wallet support (Freighter, xBull, Albedo, Rabet)
+- ✅ Seamless wallet connection and switching
+- ✅ Wallet status detection and network validation
+- ✅ Balance display with auto-refresh (30s intervals)
+- ✅ Manual balance refresh functionality
+
+#### Payment System
+- ✅ Send XLM payments with validation
+- ✅ Real-time transaction feedback
+- ✅ Transaction history with detailed view
+- ✅ Direct links to Stellar Explorer for verification
+- ✅ Clear error and success notifications
+
+#### User Interface
+- ✅ Modern, responsive design with shadcn/ui components
+- ✅ Dark/light mode theme toggle
+- ✅ Landing page with features and FAQ
+- ✅ Dashboard with comprehensive wallet management
+- ✅ Onboarding checklist with progress tracking
+- ✅ Mobile-responsive layout
+
+#### Developer Experience
+- ✅ Comprehensive test suite with Vitest
+- ✅ ESLint and TypeScript type checking
+- ✅ GitHub Actions CI/CD pipeline
+- ✅ Well-documented codebase
+- ✅ Environment configuration management
+
+---
+
+## 🚧 Currently Under Development
+
+We're actively working on these features:
+
+### Escrow System (In Progress)
+- 🔄 Soroban smart contract for escrow management
+- 🔄 Create and manage rent-splitting escrows
+- 🔄 Multi-participant support
+- 🔄 Automated payment distribution
+- 🔄 Real-time escrow status tracking
+- 🔄 Participant contribution monitoring
+
+### Enhanced Features
+- 🔄 Improved multi-wallet UX
+- 🔄 Escrow timeline visualization
+- 🔄 Payment scheduling and reminders
+- 🔄 Advanced transaction filtering
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+  <img src="./docs/screenshots/landing-page.png" alt="Landing Page" width="800"/>
+  <p><em>Landing page with wallet connection</em></p>
+</div>
+
+<div align="center">
+  <img src="./docs/screenshots/dashboard.png" alt="Dashboard" width="800"/>
+  <p><em>Dashboard showing wallet balance and payment form</em></p>
+</div>
+
+<div align="center">
+  <img src="./docs/screenshots/transaction-history.png" alt="Transaction History" width="800"/>
+  <p><em>Transaction history with verification links</em></p>
+</div>
+
+<div align="center">
+  <img src="./docs/screenshots/dark-mode.png" alt="Dark Mode" width="800"/>
+  <p><em>Dark mode interface</em></p>
+</div>
+
+> 📷 **Note**: Add your screenshots to `docs/screenshots/` directory. See [docs/screenshots/README.md](docs/screenshots/README.md) for guidelines.
+
+---
+
+## 🎥 Video Demo
+
+### Quick Walkthrough
+
+<div align="center">
+
+[![SplitRent Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
+
+*Click to watch the demo video*
+
+</div>
+
+### Features Demonstrated
+
+- Connecting a Freighter wallet
+- Checking balance and refreshing
+- Sending a payment
+- Viewing transaction history
+- Verifying transactions on Stellar Explorer
+- Using dark/light mode
+
+> 🎬 **Note**: Replace with your actual demo video link or save video file to `docs/videos/demo.mp4`. See [docs/videos/README.md](docs/videos/README.md) for guidelines.
+
+---
+
+## 🔗 Live Demo
+
+Experience SplitRent on Stellar Testnet:
+
+- **🌐 Live URL**: [https://splitrent.vercel.app](https://splitrent.vercel.app) (when deployed)
+- **🔗 Testnet**: Uses Stellar Testnet by default
+- **💰 Get Test XLM**: [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=test)
+
+---
+
+## 💡 How It Works
+
+### Basic Flow
+
+```mermaid
+graph TB
+    A[User Connects Wallet] --> B[Deposits XLM]
+    B --> C[Creates Escrow]
+    C --> D[Invites Roommates]
+    D --> E[Roommates Deposit]
+    E --> F[Smart Contract Splits]
+    F --> G[Landlord Receives Rent]
 ```
 
-## Quick Start
+### Smart Contract Architecture
+
+1. **Escrow Creation**: User sets up escrow with participants and amounts
+2. **Deposit Phase**: All participants deposit their share
+3. **Distribution**: Contract automatically splits and distributes funds
+4. **Verification**: All transactions recorded on Stellar blockchain
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: Next.js 16.1.6 (App Router)
+- **Language**: TypeScript 5.x
+- **UI Library**: React 19.2.3
+- **Styling**: Tailwind CSS 4.x
+- **Components**: shadcn/ui
+- **Testing**: Vitest 4.0.18
+
+### Blockchain
+- **Network**: Stellar (Testnet/Mainnet)
+- **Smart Contracts**: Soroban (Rust)
+- **SDK**: @stellar/stellar-sdk 14.5.0
+- **Wallet Integration**: @creit.tech/stellar-wallets-kit 2.0.0
+
+### Supported Wallets
+- Freighter
+- xBull
+- Albedo
+- Rabet
+
+### DevOps & Tools
+- **Package Manager**: pnpm 9.x
+- **CI/CD**: GitHub Actions
+- **Deployment**: Vercel
+- **Code Quality**: ESLint, TypeScript
+
+---
+
+## 📁 Project Structure
+
+```
+Rent Payment Splitter/
+├── frontend/
+│   ├── app/                      # Next.js App Router pages
+│   │   ├── page.tsx              # Landing page
+│   │   └── dashboard/page.tsx    # Dashboard
+│   ├── components/
+│   │   ├── landing/              # Landing page components
+│   │   ├── dashboard/            # Dashboard components
+│   │   ├── shared/               # Shared components
+│   │   └── ui/                   # UI primitives
+│   ├── lib/
+│   │   ├── stellar/              # Stellar utilities
+│   │   ├── wallet/               # Wallet integration
+│   │   ├── hooks/                # React hooks
+│   │   └── types/                # TypeScript types
+│   └── __tests__/                # Unit tests
+├── SplitRent/
+│   └── contracts/escrow/         # Soroban smart contracts
+│       ├── src/
+│       │   ├── lib.rs            # Contract logic
+│       │   └── test.rs           # Contract tests
+│       └── Cargo.toml
+├── docs/
+│   ├── screenshots/              # App screenshots
+│   ├── videos/                   # Demo videos
+│   ├── PRD.md                    # Product requirements
+│   ├── ROADMAP.md                # Project roadmap
+│   └── DEVELOPMENT.md            # Development guide
+└── .github/
+    └── workflows/                # CI/CD pipelines
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 20.x or higher
+- pnpm 9.x or higher
+- Git
+- A Stellar wallet (Freighter recommended)
+
+### Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/x0lg0n/Rent-Payment-Splitter.git
-cd Rent-Payment-Splitter/frontend
+cd Rent-Payment-Splitter
+
+# Install dependencies
 pnpm install
+
+# Set up environment variables
+cp frontend/.env.example frontend/.env.local
+
+# Start development server
 pnpm dev
 ```
 
-Open `http://localhost:3000`.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-## Scripts
+### Available Scripts
 
 ```bash
-pnpm dev          # run local dev server
-pnpm build        # production build
-pnpm start        # run production server
-pnpm lint         # eslint
-pnpm typecheck    # tsc --noEmit
-pnpm test         # vitest run
-pnpm test:watch   # vitest watch
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm start        # Run production server
+pnpm lint         # Run ESLint
+pnpm typecheck    # Run TypeScript type check
+pnpm test         # Run Vitest tests
+pnpm test:watch   # Run tests in watch mode
 ```
 
-## Environment
+### Smart Contract Development
 
-Defaults are already set for testnet in [`frontend/lib/config.ts`](frontend/lib/config.ts).
+```bash
+cd SplitRent
 
-Optional overrides:
+# Build contracts
+cargo build --target wasm32-unknown-unknown --release
+
+# Run contract tests
+cargo test
+
+# Deploy to testnet (requires Soroban CLI)
+stellar contract deploy --wasm target/wasm32-unknown-unknown/release/escrow.wasm --source YOUR_ACCOUNT --network testnet
+```
+
+---
+
+## 🗺️ Roadmap
+
+See our detailed [ROADMAP.md](docs/ROADMAP.md) for complete project timeline.
+
+### Phase 1: Foundation ✅
+- [x] Wallet integration
+- [x] Payment system
+- [x] Transaction history
+- [x] Modern UI/UX
+
+### Phase 2: Escrow (Current)
+- [ ] Smart contract deployment
+- [ ] Escrow creation UI
+- [ ] Participant management
+- [ ] Automated splitting
+
+### Phase 3: Advanced Features
+- [ ] Recurring payments
+- [ ] Payment scheduling
+- [ ] Notifications
+- [ ] Analytics dashboard
+
+### Phase 4: Production
+- [ ] Security audit
+- [ ] Mainnet deployment
+- [ ] Performance optimization
+- [ ] Mobile app
+
+---
+
+## 🧪 Testing and Quality
+
+### Run All Checks
+
+```bash
+pnpm lint && pnpm typecheck && pnpm test
+```
+
+### Test Coverage
+
+We maintain comprehensive test coverage for:
+- Wallet connection flows
+- Payment transactions
+- UI components
+- Utility functions
+- Smart contracts
+
+---
+
+## 🌍 Environment Variables
+
+Default configuration works for testnet. Optional overrides:
 
 ```bash
 NEXT_PUBLIC_HORIZON_URL=https://horizon-testnet.stellar.org
@@ -91,51 +353,126 @@ NEXT_PUBLIC_EXPLORER_BASE_URL=https://stellar.expert/explorer/testnet/tx
 NEXT_PUBLIC_FRIENDBOT_URL=https://laboratory.stellar.org/#account-creator?network=test
 ```
 
-## Wallet and Network Notes
+See [`frontend/.env.example`](frontend/.env.example) for all options.
 
-- Supported wallets (via WalletsKit): Freighter, xBull, Albedo, Rabet.
-- App is intended for **Stellar Testnet** for current development levels.
-- If Freighter is installed but not detected:
-  - open Freighter extension settings,
-  - enable site access for your local URL (for example `http://localhost:3000`),
-  - make sure the extension is enabled in the active browser profile,
-  - refresh the page and reconnect.
+---
 
-## Testing and Quality
+## 💼 Use Cases
 
-Current checks:
-- Unit tests with Vitest
-- ESLint
-- TypeScript typecheck
+### For Roommates
+- Split rent automatically each month
+- Track who has paid their share
+- Transparent payment history
+- No more awkward conversations about money
 
-Run before pushing:
+### For Property Managers
+- Verify rent payments instantly
+- Automated payment collection
+- Reduced administrative overhead
+- Clear audit trail
 
-```bash
-pnpm lint && pnpm typecheck && pnpm test
-```
+### For Students
+- Easy setup with no technical knowledge
+- Low transaction fees on Stellar
+- Secure and trustless system
+- Learn about blockchain technology
 
-## Delivery Plan and Docs
+---
 
-- Product requirements: [`docs/PRD.md`](docs/PRD.md)
-- Execution plan (Levels 1-6): [`docs/plan.md`](docs/plan.md)
-- Task breakdown: [`docs/todo.md`](docs/todo.md)
-- Tech recommendations: [`docs/STACK.md`](docs/STACK.md)
+## 🤝 Contributing
 
-## Git Workflow (Level-Based)
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-- Branch format: `level/<n>-<slug>`
-- PR title format: `Level <n>: <milestone title>`
-- Merge strategy: **Create a merge commit only**
-- Commit style: Conventional Commits (`feat:`, `fix:`, `test:`, `docs:`, `chore:`, `refactor:`)
-- Tag after each level merge: `v0.<level>.0`
+### Ways to Contribute
+- 🐛 Report bugs
+- 💡 Suggest features
+- 📝 Improve documentation
+- 💻 Submit PRs
+- 🎨 Design improvements
+- 🧪 Write tests
 
-## Current Focus (Level 2)
+### Development Setup
 
-- Multi-wallet UX hardening and switching
-- Escrow contract deployment + integration
-- Realtime escrow status and participant progress
-- Evidence collection (explorer links, screenshots, test traces)
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/amazing-feature`)
+3. Make your changes
+4. Run tests (`pnpm test`)
+5. Commit with conventional commits
+6. Push and open a PR
 
-## License
+---
 
-MIT - see [`LICENSE`](LICENSE).
+## 📚 Documentation
+
+- **[Product Requirements](docs/PRD.md)** - Detailed product specs
+- **[Roadmap](docs/ROADMAP.md)** - Project timeline and milestones
+- **[Development Guide](docs/DEVELOPMENT.md)** - Complete dev setup and workflow
+- **[Tech Stack](docs/STACK.md)** - Technology recommendations
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute
+- **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community guidelines
+- **[Security Policy](SECURITY.md)** - Reporting vulnerabilities
+- **[Changelog](CHANGELOG.md)** - Version history
+
+---
+
+## 🔒 Security
+
+### Security Best Practices
+- Never share your private keys or seed phrases
+- Always verify you're on the correct URL
+- Use testnet for development and testing
+- Review all transaction details before signing
+- Keep your wallet extensions up to date
+
+### Reporting Vulnerabilities
+
+Please report security vulnerabilities responsibly via email to **[your-email@example.com]** or through GitHub Security Advisories. See our [Security Policy](SECURITY.md) for details.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### What This Means
+- ✅ Free to use for personal and commercial projects
+- ✅ Can modify and distribute
+- ✅ Include original license and copyright notice
+- ❌ No warranty provided
+
+---
+
+## 🙏 Acknowledgments
+
+- [Stellar Development Foundation](https://stellar.org) for the amazing blockchain platform
+- [Soroban](https://soroban.stellar.org) for smart contract capabilities
+- [shadcn/ui](https://ui.shadcn.com) for beautiful UI components
+- [Next.js team](https://nextjs.org) for the excellent framework
+- All contributors and supporters of this project
+
+---
+
+## 📞 Contact & Support
+
+- **GitHub Issues**: [Report bugs or request features](https://github.com/x0lg0n/Rent-Payment-Splitter/issues)
+- **Discussions**: [Join the conversation](https://github.com/x0lg0n/Rent-Payment-Splitter/discussions)
+- **Twitter**: [@YourTwitter](https://twitter.com/YourTwitter) (when available)
+- **Discord**: [Join our Discord](https://discord.gg/your-invite) (when available)
+
+### Show Your Support
+
+If you find SplitRent useful, please consider:
+- ⭐ Starring this repository
+- 🔗 Sharing with friends who might benefit
+- 💡 Contributing to the project
+- 📢 Spreading the word on social media
+
+---
+
+<div align="center">
+
+**Built with ❤️ on Stellar**
+
+[Back to top](#splitrent)
+
+</div>
