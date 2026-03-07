@@ -16,6 +16,10 @@ soroban-test-accounts.json
 keys/
 *.secret
 
+# Test Snapshots (auto-generated)
+test_snapshots/
+
+
 # IDE & Editor
 .vscode/
 .idea/
