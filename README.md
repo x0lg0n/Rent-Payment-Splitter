@@ -8,6 +8,10 @@
 [![Stellar Testnet](https://img.shields.io/badge/Stellar-Testnet-blue)](https://stellar.org)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
+<!-- Optional badges for future -->
+<!-- [![Coverage Status](https://codecov.io/gh/x0lg0n/Rent-Payment-Splitter/branch/main/graph/badge.svg)](https://codecov.io/gh/x0lg0n/Rent-Payment-Splitter) -->
+<!-- [![Vercel](https://vercelbadge.vercel.app/api/x0lg0n/Rent-Payment-Splitter)](https://vercel.com) -->
+<!-- [![Discord](https://img.shields.io/discord/your-server-id?label=discord&logo=discord)](https://discord.gg/your-invite) -->
 
 **A Stellar-based rent payment dApp that helps roommates send, track, and verify rent payments on-chain**
 
