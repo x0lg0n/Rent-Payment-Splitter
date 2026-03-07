@@ -45,7 +45,7 @@ export const checkAccountExists = async (address: string): Promise<boolean> => {
   try {
     await server.loadAccount(address);
     return true;
-  } catch (error) {
+  } catch (error: any) {
     if (error?.response?.status === 404) {
       return false;
     }

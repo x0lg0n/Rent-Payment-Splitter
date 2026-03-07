@@ -38,7 +38,7 @@ export const fetchAccountDetails = async (
         assetIssuer: "asset_issuer" in b ? b.asset_issuer : undefined,
       })),
     };
-  } catch (error) {
+  } catch (error: any) {
     if (error?.response?.status === 404) {
       throw new Error(`Account ${address} not found on Stellar testnet`);
     }
@@ -72,8 +72,8 @@ export const fetchTransactionHistory = async (
       operationCount: tx.operation_count,
       feeBump: tx.fee_bump_transaction,
     })),
-    nextCursor: transactions.next_cursor,
-    hasMore: !!transactions.next_cursor,
+    nextCursor: (transactions as any).next_cursor,
+    hasMore: !!(transactions as any).next_cursor,
   };
 };
 
