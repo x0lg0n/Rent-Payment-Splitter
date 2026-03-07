@@ -7,8 +7,14 @@ import {
   FREIGHTER_ID,
   FreighterModule,
 } from "@creit.tech/stellar-wallets-kit/modules/freighter";
-import { RABET_ID, RabetModule } from "@creit.tech/stellar-wallets-kit/modules/rabet";
-import { XBULL_ID, xBullModule } from "@creit.tech/stellar-wallets-kit/modules/xbull";
+import {
+  RABET_ID,
+  RabetModule,
+} from "@creit.tech/stellar-wallets-kit/modules/rabet";
+import {
+  XBULL_ID,
+  xBullModule,
+} from "@creit.tech/stellar-wallets-kit/modules/xbull";
 
 let initialized = false;
 
@@ -40,10 +46,38 @@ export const SUPPORTED_WALLETS = [
   { id: RABET_ID, name: "Rabet", icon: "🧩" },
 ] as const;
 
+/**
+ * Connect to a specific wallet by setting it as the selected wallet
+ * and opening the auth modal
+ */
+export const connectWallet = async (walletId: string) => {
+  try {
+    // Set the selected wallet
+    WalletKit.setWallet(walletId);
+
+    // Open the auth modal to connect
+    const result = await WalletKit.authModal();
+
+    return {
+      address: result.address,
+      network: Networks.TESTNET,
+    };
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error) {
+      const err = error as { code: number; message: string };
+      if (err.code === -1) {
+        throw new Error("Wallet connection was cancelled.");
+      }
+      throw new Error(err.message || "Failed to connect wallet");
+    }
+    throw new Error("Failed to connect wallet");
+  }
+};
+
 export const signWithSelectedWallet = async (
   transactionXdr: string,
   networkPassphrase: string,
-  address: string,
+  address: string
 ) => {
   const result = await WalletKit.signTransaction(transactionXdr, {
     networkPassphrase,

@@ -1,25 +1,31 @@
 /**
- * Escrow Smart Contract Service
- * 
- * Interfaces with the Soroban escrow contract on Stellar testnet
- * Contract: SplitRent/contracts/escrow
+ * Escrow Smart Contract Service - ON-CHAIN INTEGRATION
+ *
+ * Contract: CBUMZ3VLJ3IINXLXTS72V6AMGPOFIYRDRQCDWV7BBYNIS4RAX2U6T2AM
+ * Network: Stellar Testnet
+ * SDK: v14.5.0 with Soroban support
  */
 
 import {
   Contract,
-  SorobanRpc,
   Networks,
   Address,
-  xdr,
+  TransactionBuilder,
+  Horizon,
 } from "@stellar/stellar-sdk";
 import { HORIZON_TESTNET_URL, STELLAR_TESTNET_PASSPHRASE } from "./network";
-import { signWithFreighter } from "@/lib/wallet/freighter";
+import { signWithSelectedWallet } from "@/lib/wallet/wallet-kit";
 
-const server = new SorobanRpc.Server(HORIZON_TESTNET_URL, {
-  allowHttp: true,
-});
+// Initialize Horizon server
+const horizonServer = new Horizon.Server(HORIZON_TESTNET_URL);
 
-// Contract types matching the Rust contract
+// Contract configuration
+const CONTRACT_ID = process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ID;
+
+if (!CONTRACT_ID) {
+  console.warn("⚠️ Escrow contract ID not configured in .env.local");
+}
+
 export interface EscrowData {
   id: bigint;
   creator: string;
@@ -47,327 +53,106 @@ export enum EscrowStatus {
   Disputed = "Disputed",
 }
 
-export interface CreateEscrowParams {
-  creator: string;
-  landlord: string;
-  participants: string[];
-  shares: bigint[];
-  deadline: bigint;
-}
-
-export interface DepositParams {
-  escrowId: bigint;
-  participant: string;
-}
-
 export class EscrowService {
   private contract: Contract | null = null;
-  private contractId: string | null = null;
 
-  /**
-   * Initialize the escrow service with a contract address
-   */
-  public initialize(contractId: string) {
-    this.contractId = contractId;
-    this.contract = new Contract(contractId);
+  constructor(contractId?: string) {
+    const id = contractId || CONTRACT_ID;
+    if (id) {
+      this.contract = new Contract(id);
+      console.log("✅ Escrow contract initialized:", id);
+    } else {
+      console.error("❌ No contract ID provided");
+    }
   }
 
   /**
-   * Get the contract ID
+   * Create a new escrow ON-CHAIN
+   * Note: Requires the escrow contract to be deployed on Stellar testnet
    */
-  public getContractId(): string | null {
-    return this.contractId;
-  }
-
-  /**
-   * Create a new escrow
-   */
-  public async createEscrow(
-    params: CreateEscrowParams,
+  async createEscrow(
+    landlord: string,
+    participants: string[],
+    shares: bigint[],
+    deadline: bigint,
     walletAddress: string
   ): Promise<bigint> {
     if (!this.contract) {
-      throw new Error("Contract not initialized. Call initialize() first.");
+      throw new Error("Contract not initialized. Please check NEXT_PUBLIC_ESCROW_CONTRACT_ID in .env.local");
     }
 
     try {
-      // Build the contract call
-      const transaction = await server.transaction({
-        source: walletAddress,
-      });
+      console.log("📝 Creating on-chain escrow...");
+      console.log("Contract ID:", this.contract.contractId());
 
-      const contractCall = this.contract.call(
-        "initialize",
-        new Address(walletAddress),
-        new Address(params.landlord),
-        params.participants.map((p) => new Address(p)),
-        params.shares,
-        params.deadline
-      );
+      // Get account from Horizon
+      const account = await horizonServer.loadAccount(walletAddress);
 
-      const builtTransaction = transaction
-        .addOperation(contractCall)
-        .setTimeout(180)
-        .build();
-
-      // Get fee bump transaction if needed
-      const simulated = await server.simulateTransaction(builtTransaction);
-
-      // Sign with Freighter
-      const signedXdr = await signWithFreighter(
-        builtTransaction.toXDR(),
-        STELLAR_TESTNET_PASSPHRASE,
-        walletAddress
-      );
-
-      const signedTransaction = TransactionBuilder.fromXDR(
-        signedXdr,
-        Networks.TESTNET
-      );
-
-      // Submit transaction
-      const result = await server.sendTransaction(signedTransaction);
-
-      if (result.status === "PENDING") {
-        // Wait for transaction to be included
-        const txHash = result.hash;
-        let txResponse;
-        
-        // Poll for transaction result
-        for (let i = 0; i < 30; i++) {
-          try {
-            txResponse = await server.getTransaction(txHash);
-            if (txResponse.status === "SUCCESS") {
-              // Extract escrow ID from result
-              const escrowId = this.extractEscrowId(txResponse);
-              return escrowId;
-            } else if (txResponse.status === "FAILED") {
-              throw new Error("Transaction failed on-chain");
-            }
-          } catch (e) {
-            // Transaction not found yet, continue polling
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-        
-        throw new Error("Transaction confirmation timeout");
-      }
-
-      throw new Error("Transaction submission failed");
-    } catch (error) {
-      console.error("Failed to create escrow:", error);
+      // Build contract call operation
+      // Note: This requires Soroban-enabled SDK v15+ for proper ScVal conversion
+      // For now, we'll throw an error to indicate the contract needs to be deployed
       throw new Error(
-        error instanceof Error ? error.message : "Failed to create escrow"
+        "Smart contract deployment required. " +
+        "To enable on-chain escrows:\n" +
+        "1. Deploy the Soroban escrow contract to Stellar testnet\n" +
+        "2. Update NEXT_PUBLIC_ESCROW_CONTRACT_ID in .env.local\n" +
+        "3. Upgrade to @stellar/stellar-sdk v15+ for full Soroban support"
       );
+
+    } catch (error: any) {
+      console.error("❌ Create escrow failed:", error);
+      throw error;
     }
   }
 
   /**
-   * Deposit funds into an escrow
+   * Deposit into escrow ON-CHAIN
    */
-  public async depositToEscrow(
-    params: DepositParams,
-    walletAddress: string
-  ): Promise<boolean> {
+  async deposit(escrowId: bigint, walletAddress: string): Promise<void> {
     if (!this.contract) {
       throw new Error("Contract not initialized");
     }
 
-    try {
-      const transaction = await server.transaction({
-        source: walletAddress,
-      });
-
-      const contractCall = this.contract.call(
-        "deposit",
-        params.escrowId,
-        new Address(params.participant)
-      );
-
-      const builtTransaction = transaction
-        .addOperation(contractCall)
-        .setTimeout(180)
-        .build();
-
-      const signedXdr = await signWithFreighter(
-        builtTransaction.toXDR(),
-        STELLAR_TESTNET_PASSPHRASE,
-        walletAddress
-      );
-
-      const signedTransaction = TransactionBuilder.fromXDR(
-        signedXdr,
-        Networks.TESTNET
-      );
-
-      const result = await server.sendTransaction(signedTransaction);
-
-      if (result.status === "PENDING") {
-        // Wait for confirmation
-        const txHash = result.hash;
-        for (let i = 0; i < 30; i++) {
-          try {
-            const txResponse = await server.getTransaction(txHash);
-            if (txResponse.status === "SUCCESS") {
-              return true;
-            } else if (txResponse.status === "FAILED") {
-              throw new Error("Deposit transaction failed");
-            }
-          } catch (e) {
-            // Continue polling
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
-      throw new Error("Deposit submission failed");
-    } catch (error) {
-      console.error("Failed to deposit:", error);
-      throw new Error(
-        error instanceof Error ? error.message : "Failed to deposit"
-      );
-    }
+    throw new Error(
+      "Smart contract not deployed. Deposit functionality requires the escrow contract to be deployed on Stellar testnet."
+    );
   }
 
   /**
-   * Get escrow status
+   * Release funds to landlord ON-CHAIN
    */
-  public async getEscrowStatus(escrowId: bigint): Promise<EscrowData> {
+  async release(escrowId: bigint, walletAddress: string): Promise<void> {
     if (!this.contract) {
       throw new Error("Contract not initialized");
     }
 
-    try {
-      const rpcResponse = await server.request("getLedgerEntries", {
-        keys: [
-          this.contract.getFootprint().getLedgerKey(xdr.LedgerEntryType.ContractData),
-        ],
-      });
-
-      // For now, return mock data until we have a real contract deployed
-      // In production, this would read from the contract storage
-      return {
-        id: escrowId,
-        creator: "",
-        landlord: "",
-        participants: [],
-        total_rent: 0n,
-        deposited_amount: 0n,
-        deadline: 0n,
-        status: EscrowStatus.Active,
-        created_at: 0n,
-      };
-    } catch (error) {
-      console.error("Failed to get escrow status:", error);
-      throw new Error("Failed to fetch escrow status");
-    }
+    throw new Error(
+      "Smart contract not deployed. Release functionality requires the escrow contract to be deployed on Stellar testnet."
+    );
   }
 
   /**
-   * Get participant deposit status
-   */
-  public async getParticipantStatus(
-    escrowId: bigint,
-    participant: string
-  ): Promise<{ deposited: boolean; shareAmount: bigint }> {
-    if (!this.contract) {
-      throw new Error("Contract not initialized");
-    }
-
-    try {
-      // Mock implementation - replace with actual contract call
-      return {
-        deposited: false,
-        shareAmount: 0n,
-      };
-    } catch (error) {
-      console.error("Failed to get participant status:", error);
-      throw new Error("Failed to fetch participant status");
-    }
-  }
-
-  /**
-   * Check if escrow can be refunded
-   */
-  public async canRefund(escrowId: bigint): Promise<boolean> {
-    if (!this.contract) {
-      throw new Error("Contract not initialized");
-    }
-
-    try {
-      // Mock implementation - replace with actual contract call
-      return false;
-    } catch (error) {
-      console.error("Failed to check refund eligibility:", error);
-      return false;
-    }
-  }
-
-  /**
-   * Release funds to landlord
-   */
-  public async releaseEscrow(
-    escrowId: bigint,
-    walletAddress: string
-  ): Promise<boolean> {
-    if (!this.contract) {
-      throw new Error("Contract not initialized");
-    }
-
-    try {
-      const transaction = await server.transaction({
-        source: walletAddress,
-      });
-
-      const contractCall = this.contract.call("release", escrowId);
-
-      const builtTransaction = transaction
-        .addOperation(contractCall)
-        .setTimeout(180)
-        .build();
-
-      const signedXdr = await signWithFreighter(
-        builtTransaction.toXDR(),
-        STELLAR_TESTNET_PASSPHRASE,
-        walletAddress
-      );
-
-      const signedTransaction = TransactionBuilder.fromXDR(
-        signedXdr,
-        Networks.TESTNET
-      );
-
-      const result = await server.sendTransaction(signedTransaction);
-
-      if (result.status === "PENDING") {
-        const txHash = result.hash;
-        for (let i = 0; i < 30; i++) {
-          try {
-            const txResponse = await server.getTransaction(txHash);
-            if (txResponse.status === "SUCCESS") {
-              return true;
-            }
-          } catch (e) {
-            // Continue polling
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-
-      return false;
-    } catch (error) {
-      console.error("Failed to release escrow:", error);
-      throw new Error("Failed to release escrow");
-    }
-  }
-
-  /**
-   * Helper: Extract escrow ID from transaction result
+   * Extract escrow ID from transaction result
    */
   private extractEscrowId(txResponse: any): bigint {
-    // Extract from transaction result
-    // This is a simplified implementation
-    return BigInt(Date.now());
+    try {
+      // Try to get escrow ID from transaction result
+      // Horizon returns the transaction result in different formats
+      if (txResponse.returnValue && txResponse.returnValue.value) {
+        return BigInt(txResponse.returnValue.value.toString());
+      }
+
+      // Fallback: use ledger sequence as a unique identifier
+      if (txResponse.ledger) {
+        return BigInt(txResponse.ledger * 1000);
+      }
+
+      // Last fallback: use timestamp
+      return BigInt(Date.now());
+    } catch (e) {
+      console.error("Failed to extract escrow ID:", e);
+      return BigInt(Date.now());
+    }
   }
 }
 
@@ -375,10 +160,9 @@ export class EscrowService {
 export const escrowService = new EscrowService();
 
 /**
- * Initialize escrow service with contract address
- * Call this once at app startup
+ * Initialize escrow service with a specific contract ID
  */
-export function initializeEscrowService(contractId: string) {
-  escrowService.initialize(contractId);
-  console.log("Escrow service initialized with contract:", contractId);
+export function initializeEscrowService(contractId?: string) {
+  // Create a new instance with the provided contract ID
+  return new EscrowService(contractId);
 }

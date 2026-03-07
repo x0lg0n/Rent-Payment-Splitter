@@ -35,6 +35,11 @@ export function PaymentFormCard({
   const [amountError, setAmountError] = useState<string | null>(null);
   const [isCheckingRecipient, setIsCheckingRecipient] = useState(false);
 
+  // Calculate if amount is >90% of balance
+  const balancePercentage = walletBalance && amount ? (Number(amount) / walletBalance) * 100 : 0;
+  const isHighAmount = balancePercentage > 90;
+  const isVeryHighAmount = balancePercentage > 95;
+
   // Validate recipient address in real-time
   useEffect(() => {
     if (!recipientAddress.trim()) {
@@ -162,25 +167,58 @@ export function PaymentFormCard({
               </p>
             )}
 
-            {/* Quick Amount Buttons */}
-            {!amountError && amount && (
-              <div className="flex flex-wrap gap-2 pt-2">
-                <span className="text-xs text-muted-foreground flex items-center">
-                  <Coins className="mr-1 h-3 w-3" />
-                  Quick amounts:
-                </span>
-                {QUICK_AMOUNTS.map((quickAmount) => (
-                  <Button
-                    key={quickAmount}
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleQuickAmount(quickAmount)}
-                    className="h-8 min-w-[60px] px-2 text-xs"
-                  >
-                    {quickAmount} XLM
-                  </Button>
-                ))}
+            {/* Quick Amount Buttons - Always visible */}
+            <div className="flex flex-wrap gap-2 pt-2">
+              <span className="text-xs text-muted-foreground flex items-center">
+                <Coins className="mr-1 h-3 w-3" />
+                Quick amounts:
+              </span>
+              {QUICK_AMOUNTS.map((quickAmount) => (
+                <Button
+                  key={quickAmount}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickAmount(quickAmount)}
+                  className={`h-8 min-w-[60px] px-2 text-xs ${
+                    amount === quickAmount.toString()
+                      ? 'border-[var(--brand)] bg-[var(--brand)]/10'
+                      : ''
+                  }`}
+                >
+                  {quickAmount} XLM
+                </Button>
+              ))}
+            </div>
+
+            {/* Balance Warning */}
+            {walletBalance && amount && !amountError && isHighAmount && (
+              <div className={`rounded-lg p-3 mt-2 ${
+                isVeryHighAmount 
+                  ? 'bg-red-500/10 border border-red-500/30' 
+                  : 'bg-amber-500/10 border border-amber-500/30'
+              }`}>
+                <div className="flex items-start gap-2">
+                  <span className="text-lg">
+                    {isVeryHighAmount ? '⚠️' : '⚡'}
+                  </span>
+                  <div className="flex-1">
+                    <p className={`text-xs font-semibold ${
+                      isVeryHighAmount ? 'text-red-700' : 'text-amber-700'
+                    }`}>
+                      {isVeryHighAmount 
+                        ? 'Very High Amount Warning' 
+                        : 'High Amount Warning'}
+                    </p>
+                    <p className={`text-xs mt-1 ${
+                      isVeryHighAmount ? 'text-red-600' : 'text-amber-600'
+                    }`}>
+                      {isVeryHighAmount
+                        ? `You're about to send ${balancePercentage.toFixed(1)}% of your balance. This will leave you with only ${(walletBalance - Number(amount)).toFixed(2)} XLM for transaction fees.`
+                        : `You're sending ${balancePercentage.toFixed(1)}% of your balance. Consider keeping some XLM for transaction fees.`}
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>

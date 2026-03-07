@@ -11,6 +11,7 @@ import {
 import { rateLimiters } from "@/lib/utils/rate-limit";
 import type { TransactionRecord } from "@/lib/types/transaction";
 import type { ToastLevel } from "@/components/dashboard/toast-stack";
+import { useTransactionStore } from "@/lib/store";
 
 interface UsePaymentOptions {
   walletAddress: string | null;
@@ -29,48 +30,24 @@ export function usePayment({
   pushToast,
   refreshBalance,
 }: UsePaymentOptions) {
+  // Use Zustand store for transactions
+  const {
+    transactions,
+    addTransaction,
+    clearTransactions: clearStoreTransactions,
+  } = useTransactionStore();
+
   const [recipientAddress, setRecipientAddress] = useState("");
   const [paymentAmount, setPaymentAmount] = useState("");
   const [isSendingPayment, setIsSendingPayment] = useState(false);
   const [paymentSuccessHash, setPaymentSuccessHash] = useState<string | null>(null);
-  const [transactions, setTransactions] = useState<TransactionRecord[]>([]);
   const [isCheckingRecipient, setIsCheckingRecipient] = useState(false);
   const [recipientExists, setRecipientExists] = useState<boolean | null>(null);
-
-  const historyStorageKey = useMemo(() => {
-    if (!walletAddress) return null;
-    return `splitrent:tx-history:${walletAddress}`;
-  }, [walletAddress]);
-
-  // Load transaction history from localStorage
-  useEffect(() => {
-    if (!historyStorageKey) {
-      setTransactions([]);
-      return;
-    }
-    try {
-      const raw = localStorage.getItem(historyStorageKey);
-      if (!raw) {
-        setTransactions([]);
-        return;
-      }
-      const parsed = JSON.parse(raw) as TransactionRecord[];
-      setTransactions(parsed);
-    } catch {
-      setTransactions([]);
-    }
-  }, [historyStorageKey]);
-
-  // Persist transaction history to localStorage
-  useEffect(() => {
-    if (!historyStorageKey) return;
-    localStorage.setItem(historyStorageKey, JSON.stringify(transactions));
-  }, [historyStorageKey, transactions]);
 
   // Check if recipient account exists (debounced)
   useEffect(() => {
     const cleanRecipient = recipientAddress.trim();
-    
+
     if (!cleanRecipient || !isValidStellarAddress(cleanRecipient)) {
       setRecipientExists(null);
       setIsCheckingRecipient(false);
@@ -93,8 +70,8 @@ export function usePayment({
   }, [recipientAddress]);
 
   const clearTransactions = useCallback(() => {
-    setTransactions([]);
-  }, []);
+    clearStoreTransactions();
+  }, [clearStoreTransactions]);
 
   const handlePaymentSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -176,9 +153,9 @@ export function usePayment({
           createdAt: new Date().toISOString(),
           confirmed: result.confirmed,
         };
-        
-        setTransactions((prev) => [tx, ...prev]);
-        
+
+        addTransaction(tx);
+
         if (result.confirmed) {
           setPaymentSuccessHash(result.hash);
           setRecipientAddress("");
@@ -214,6 +191,7 @@ export function usePayment({
       walletBalance,
       pushToast,
       refreshBalance,
+      addTransaction,
     ],
   );
 

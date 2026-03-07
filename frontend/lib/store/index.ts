@@ -1,13 +1,34 @@
 /**
  * Zustand Store for SplitRent
- * 
- * Install: pnpm add zustand
  */
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { TransactionRecord } from "@/lib/types/transaction";
-import type { EscrowData } from "@/lib/stellar/contract";
+
+// Custom storage that handles BigInt serialization
+const createBigIntSafeStorage = () => {
+  return {
+    getItem: (name: string) => {
+      const str = localStorage.getItem(name);
+      if (!str) return null;
+      return JSON.parse(str);
+    },
+    setItem: (name: string, value: any) => {
+      // Convert BigInt to string for serialization
+      const serialized = JSON.stringify(value, (key, val) => {
+        if (typeof val === 'bigint') {
+          return val.toString();
+        }
+        return val;
+      });
+      localStorage.setItem(name, serialized);
+    },
+    removeItem: (name: string) => {
+      localStorage.removeItem(name);
+    },
+  };
+};
 
 // ============ WALLET STATE ============
 
@@ -46,7 +67,10 @@ export const useWalletStore = create<WalletState>()(
         walletBalance: null 
       }),
     }),
-    { name: "splitrent-wallet" }
+    {
+      name: "splitrent-wallet",
+      storage: createJSONStorage(() => createBigIntSafeStorage()),
+    }
   )
 );
 
@@ -71,7 +95,9 @@ export const useTransactionStore = create<TransactionState>()(
       addTransaction: (tx) => {
         const existingHashes = new Set(get().transactions.map(t => t.hash));
         if (!existingHashes.has(tx.hash)) {
-          set((state) => ({ transactions: [tx, ...state.transactions] }));
+          set((state) => ({
+            transactions: [tx, ...state.transactions]
+          }));
         }
       },
       
@@ -79,21 +105,41 @@ export const useTransactionStore = create<TransactionState>()(
       clearTransactions: () => set({ transactions: [] }),
       setLoading: (loading) => set({ isLoading: loading }),
     }),
-    { name: "splitrent-transactions" }
+    {
+      name: "splitrent-transactions",
+      storage: createJSONStorage(() => createBigIntSafeStorage()),
+    }
   )
 );
 
 // ============ ESCROW STATE ============
 
+// Convert BigInt fields to string for storage
+interface EscrowDataStorage {
+  id: string;
+  creator: string;
+  landlord: string;
+  participants: Array<{
+    address: string;
+    share_amount: string;
+    deposited: boolean;
+  }>;
+  total_rent: string;
+  deposited_amount: string;
+  deadline: string;
+  status: string;
+  created_at: string;
+}
+
 interface EscrowState {
-  escrows: EscrowData[];
-  currentEscrowId: bigint | null;
+  escrows: any[];
+  currentEscrowId: string | null;
   isLoading: boolean;
   
-  addEscrow: (escrow: EscrowData) => void;
-  updateEscrow: (escrowId: bigint, updates: Partial<EscrowData>) => void;
+  addEscrow: (escrow: any) => void;
+  updateEscrow: (escrowId: bigint, updates: Partial<any>) => void;
   setCurrentEscrow: (escrowId: bigint | null) => void;
-  setEscrows: (escrows: EscrowData[]) => void;
+  setEscrows: (escrows: any[]) => void;
   setLoading: (loading: boolean) => void;
 }
 
@@ -106,23 +152,50 @@ export const useEscrowStore = create<EscrowState>()(
       
       addEscrow: (escrow) => {
         const existingIds = new Set(get().escrows.map(e => e.id));
-        if (!existingIds.has(escrow.id)) {
-          set((state) => ({ escrows: [escrow, ...state.escrows] }));
+        if (!existingIds.has(escrow.id.toString())) {
+          // Convert to storage format
+          const storageEscrow: EscrowDataStorage = {
+            id: escrow.id.toString(),
+            creator: escrow.creator,
+            landlord: escrow.landlord,
+            participants: escrow.participants.map(p => ({
+              address: p.address,
+              share_amount: p.share_amount.toString(),
+              deposited: p.deposited,
+            })),
+            total_rent: escrow.total_rent.toString(),
+            deposited_amount: escrow.deposited_amount.toString(),
+            deadline: escrow.deadline.toString(),
+            status: escrow.status,
+            created_at: escrow.created_at.toString(),
+          };
+          
+          set((state) => ({
+            escrows: [storageEscrow, ...state.escrows]
+          }));
         }
       },
       
       updateEscrow: (escrowId, updates) => {
+        const idStr = escrowId.toString();
         set((state) => ({
           escrows: state.escrows.map((e) =>
-            e.id === escrowId ? { ...e, ...updates } : e
+            e.id === idStr ? { ...e, ...updates } : e
           ),
         }));
       },
       
-      setCurrentEscrow: (escrowId) => set({ currentEscrowId: escrowId }),
+      setCurrentEscrow: (escrowId) => {
+        const idStr = escrowId ? escrowId.toString() : null;
+        set({ currentEscrowId: idStr });
+      },
+      
       setEscrows: (escrows) => set({ escrows }),
       setLoading: (loading) => set({ isLoading: loading }),
     }),
-    { name: "splitrent-escrows" }
+    {
+      name: "splitrent-escrows",
+      storage: createJSONStorage(() => createBigIntSafeStorage()),
+    }
   )
 );

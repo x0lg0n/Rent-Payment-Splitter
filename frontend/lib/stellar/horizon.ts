@@ -34,8 +34,8 @@ export const fetchAccountDetails = async (
       balances: account.balances.map((b) => ({
         balance: b.balance,
         assetType: b.asset_type,
-        assetCode: b.asset_code,
-        assetIssuer: b.asset_issuer,
+        assetCode: "asset_code" in b ? b.asset_code : undefined,
+        assetIssuer: "asset_issuer" in b ? b.asset_issuer : undefined,
       })),
     };
   } catch (error) {
