@@ -25,9 +25,17 @@ export const STELLAR_CONFIG = {
 
   /** Stellar mainnet passphrase */
   mainnetPassphrase: "Public Global Stellar Network ; September 2015",
-  
+
   /** Network type */
   network: (process.env.NEXT_PUBLIC_STELLAR_NETWORK ?? "testnet") as "testnet" | "mainnet",
+
+  /** Soroban RPC endpoint */
+  sorobanRpcUrl:
+    process.env.NEXT_PUBLIC_SOROBAN_RPC_URL ??
+    "https://soroban-testnet.stellar.org",
+
+  /** Escrow contract ID */
+  escrowContractId: process.env.NEXT_PUBLIC_ESCROW_CONTRACT_ID,
 } as const;
 
 export const EXPLORER_CONFIG = {
@@ -71,3 +79,23 @@ export const isAnalyticsEnabled = (): boolean => APP_CONFIG.enableAnalytics;
  * Get the current network
  */
 export const getCurrentNetwork = (): "testnet" | "mainnet" => STELLAR_CONFIG.network;
+
+/**
+ * Get Soroban RPC URL
+ */
+export const getSorobanRpcUrl = (): string => STELLAR_CONFIG.sorobanRpcUrl;
+
+/**
+ * Get escrow contract ID
+ */
+export const getEscrowContractId = (): string | undefined => STELLAR_CONFIG.escrowContractId;
+
+// Re-export for convenience
+export const config = {
+  ...STELLAR_CONFIG,
+  ...EXPLORER_CONFIG,
+  ...APP_CONFIG,
+  networkPassphrase: STELLAR_CONFIG.network === "mainnet" 
+    ? STELLAR_CONFIG.mainnetPassphrase 
+    : STELLAR_CONFIG.testnetPassphrase,
+} as const;
