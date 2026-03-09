@@ -14,7 +14,7 @@ const createBigIntSafeStorage = () => {
       if (!str) return null;
       return JSON.parse(str);
     },
-    setItem: (name: string, value: any) => {
+    setItem: (name: string, value: unknown) => {
       // Convert BigInt to string for serialization
       const serialized = JSON.stringify(value, (key, val) => {
         if (typeof val === 'bigint') {
@@ -69,6 +69,14 @@ export const useWalletStore = create<WalletState>()(
     }),
     {
       name: "splitrent-wallet",
+      version: 2,
+      migrate: () => ({
+        walletAddress: null,
+        walletNetwork: null,
+        walletBalance: null,
+        isConnecting: false,
+      }),
+      partialize: () => ({}),
       storage: createJSONStorage(() => createBigIntSafeStorage()),
     }
   )
@@ -132,14 +140,28 @@ interface EscrowDataStorage {
 }
 
 interface EscrowState {
-  escrows: any[];
+  escrows: EscrowDataStorage[];
   currentEscrowId: string | null;
   isLoading: boolean;
   
-  addEscrow: (escrow: any) => void;
-  updateEscrow: (escrowId: bigint, updates: Partial<any>) => void;
+  addEscrow: (escrow: {
+    id: bigint | string;
+    creator: string;
+    landlord: string;
+    participants: Array<{
+      address: string;
+      share_amount: bigint | string;
+      deposited: boolean;
+    }>;
+    total_rent: bigint | string;
+    deposited_amount: bigint | string;
+    deadline: bigint | string;
+    status: string;
+    created_at: bigint | string;
+  }) => void;
+  updateEscrow: (escrowId: bigint, updates: Partial<EscrowDataStorage>) => void;
   setCurrentEscrow: (escrowId: bigint | null) => void;
-  setEscrows: (escrows: any[]) => void;
+  setEscrows: (escrows: EscrowDataStorage[]) => void;
   setLoading: (loading: boolean) => void;
 }
 

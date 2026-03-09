@@ -48,19 +48,21 @@ export const SUPPORTED_WALLETS = [
 
 /**
  * Connect to a specific wallet by setting it as the selected wallet
- * and opening the auth modal
+ * and requesting its address directly.
  */
 export const connectWallet = async (walletId: string) => {
   try {
     // Set the selected wallet
     WalletKit.setWallet(walletId);
 
-    // Open the auth modal to connect
-    const result = await WalletKit.authModal();
+    // Connect directly with the selected wallet module to avoid
+    // showing a second wallet picker UI.
+    const result = await WalletKit.selectedModule.getAddress();
+    const networkResult = await WalletKit.getNetwork().catch(() => ({ networkPassphrase: Networks.TESTNET }));
 
     return {
       address: result.address,
-      network: Networks.TESTNET,
+      network: networkResult.networkPassphrase || Networks.TESTNET,
     };
   } catch (error) {
     if (error && typeof error === "object" && "code" in error) {
