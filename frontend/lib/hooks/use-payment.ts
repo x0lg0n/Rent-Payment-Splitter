@@ -204,6 +204,27 @@ export function usePayment({
     }
   };
 
+  // Calculate total sent from transactions
+  const totalSent = useMemo(() => {
+    return transactions
+      .filter(tx => tx.from.toLowerCase() === walletAddress?.toLowerCase())
+      .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+  }, [transactions, walletAddress]);
+
+  // Calculate total received from transactions
+  const totalReceived = useMemo(() => {
+    return transactions
+      .filter(tx => tx.to.toLowerCase() === walletAddress?.toLowerCase())
+      .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+  }, [transactions, walletAddress]);
+
+  // Calculate success rate (confirmed vs total)
+  const successRate = useMemo(() => {
+    if (transactions.length === 0) return 100;
+    const confirmed = transactions.filter(tx => tx.confirmed).length;
+    return (confirmed / transactions.length) * 100;
+  }, [transactions]);
+
   return {
     recipientAddress,
     paymentAmount,
@@ -212,6 +233,9 @@ export function usePayment({
     transactions,
     isCheckingRecipient,
     recipientExists,
+    totalSent,
+    totalReceived,
+    successRate,
     setRecipientAddress,
     setPaymentAmount,
     setPaymentSuccessHash,

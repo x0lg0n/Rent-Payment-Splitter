@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchTestnetXlmBalance } from "@/lib/stellar/horizon";
 import { isMainnetNetwork, isTestnetNetwork } from "@/lib/stellar/network";
-import { connectFreighter, getFreighterSession } from "@/lib/wallet/freighter";
-import { WalletKit, SUPPORTED_WALLETS, connectWallet } from "@/lib/wallet/wallet-kit";
+import { connectFreighter } from "@/lib/wallet/freighter";
+import { connectWallet } from "@/lib/wallet/wallet-kit";
 import { APP_CONFIG } from "@/lib/config";
 import type { ToastLevel } from "@/components/dashboard/toast-stack";
 import { useWalletStore } from "@/lib/store";
@@ -88,26 +88,17 @@ export function useWallet({ pushToast }: UseWalletOptions) {
     [setBalance],
   );
 
-  // Restore session on mount (including last wallet preference)
+  // Load last wallet preference (explicit connect only).
   useEffect(() => {
-    const loadSession = async () => {
-      try {
-        // Load last wallet preference
-        const savedWalletId = localStorage.getItem("splitrent:lastWallet");
-        if (savedWalletId) {
-          setLastWalletId(savedWalletId);
-        }
-
-        const session = await getFreighterSession();
-        if (!session) return;
-
-        setWallet(session.address, session.network || "");
-      } catch {
-        setWalletError("Unable to restore wallet session.");
+    try {
+      const savedWalletId = localStorage.getItem("splitrent:lastWallet");
+      if (savedWalletId) {
+        setLastWalletId(savedWalletId);
       }
-    };
-    void loadSession();
-  }, [setWallet]);
+    } catch {
+      setWalletError("Unable to load wallet preference.");
+    }
+  }, []);
 
   // Auto-refresh balance
   useEffect(() => {
@@ -156,7 +147,7 @@ export function useWallet({ pushToast }: UseWalletOptions) {
               "Freighter is connected to mainnet. Please switch to testnet.",
               "error",
             );
-            return;
+            return false;
           }
 
           await refreshBalance(result.address, result.network);
@@ -165,6 +156,7 @@ export function useWallet({ pushToast }: UseWalletOptions) {
             `${selectedWalletId === 'freighter' ? 'Freighter' : selectedWalletId} connected on Stellar testnet.`,
             "success"
           );
+          return true;
         }
       } else {
         // Fallback to Freighter if no wallet specified
@@ -184,11 +176,12 @@ export function useWallet({ pushToast }: UseWalletOptions) {
             "Freighter is connected to mainnet. Please switch to testnet.",
             "error",
           );
-          return;
+          return false;
         }
 
         await refreshBalance(session.address, session.network);
         pushToast("Wallet connected", "Freighter connected on Stellar testnet.", "success");
+        return true;
       }
     } catch (error) {
       const message =
@@ -197,6 +190,7 @@ export function useWallet({ pushToast }: UseWalletOptions) {
           : "Failed to connect wallet. Please try again.";
       setWalletError(message);
       pushToast("Wallet connection failed", message, "error");
+      return false;
     } finally {
       setConnecting(false);
     }
