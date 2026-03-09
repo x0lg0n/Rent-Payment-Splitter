@@ -36,12 +36,12 @@ const faqs = [
 
 export function FaqSection() {
   return (
-    <section id="faq" className="mx-auto w-full max-w-7xl px-6 py-24 md:px-10">
+    <section id="faq" className="rounded-[26px] border border-slate-200 bg-white/70 p-6 dark:border-slate-700 dark:bg-slate-900/55 md:p-8">
       <div className="mb-16 flex flex-col items-center text-center">
-        <h2 className="text-4xl font-bold tracking-tighter md:text-5xl">
+        <h2 className="text-3xl font-bold tracking-tighter text-slate-950 dark:text-white md:text-4xl">
           Frequently Asked Questions
         </h2>
-        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+        <p className="mt-3 max-w-2xl text-base text-slate-600 dark:text-slate-300">
           Everything you need to know about using SplitRent.
         </p>
       </div>
@@ -55,7 +55,7 @@ export function FaqSection() {
           <AccordionItem
             key={idx}
             value={`faq-${idx}`}
-            className="border-b border-white/20 dark:border-white/10"
+            className="border-b border-slate-200 dark:border-slate-700"
           >
             <AccordionTrigger className="py-5 text-left text-base font-semibold hover:text-[var(--brand)] transition-colors">
               {item.q}

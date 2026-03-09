@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/shared/theme-toggle";
 const navItems = [
   { label: "Features", href: "#features" },
   { label: "Workflow", href: "#workflow" },
+  { label: "Service", href: "#service-info" },
   { label: "FAQ", href: "#faq" },
 ];
 
@@ -17,8 +18,8 @@ interface LandingHeaderProps {
 
 export function LandingHeader({ onConnectClick }: LandingHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/35 bg-white/80 backdrop-blur-md dark:border-white/10 dark:bg-black/35">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3 md:px-10">
+    <header className="border-b border-white/35 bg-white/70 backdrop-blur-md dark:border-white/10 dark:bg-slate-900/45">
+      <div className="mx-auto flex w-full items-center justify-between px-4 py-3 md:px-6">
         <Link href="/" className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand-soft)]">
             <Wallet className="h-4 w-4" />
@@ -29,12 +30,12 @@ export function LandingHeader({ onConnectClick }: LandingHeaderProps) {
           </div>
         </Link>
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-5 md:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 md:flex dark:border-slate-700 dark:bg-slate-900/80">
           {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-full px-3 py-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-slate-100 hover:text-foreground dark:hover:bg-slate-800"
             >
               {item.label}
             </a>
