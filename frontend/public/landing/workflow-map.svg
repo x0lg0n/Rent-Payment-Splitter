@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 420" fill="none" role="img" aria-label="SplitRent workflow map">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F0F5FF"/>
+      <stop offset="100%" stop-color="#E4ECFF"/>
+    </linearGradient>
+    <style>
+      .mover { animation: move 3.2s ease-in-out infinite; }
+      .signal { animation: signal 1.9s ease-in-out infinite; transform-origin:center; }
+      .signal.s2 { animation-delay:.25s; }
+      .signal.s3 { animation-delay:.5s; }
+      @keyframes move { 0%,100%{transform:translateX(0)} 50%{transform:translateX(170px)} }
+      @keyframes signal { 0%,100%{opacity:.4; transform:scale(1)} 50%{opacity:1; transform:scale(1.2)} }
+    </style>
+  </defs>
+
+  <rect width="980" height="420" rx="30" fill="url(#bg)"/>
+
+  <rect x="54" y="98" width="248" height="224" rx="28" fill="#F8FBFF" stroke="#CBD9F7"/>
+  <text x="178" y="160" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700" fill="#0F172A">1. Connect</text>
+  <text x="178" y="204" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" fill="#40577F">Wallet auth</text>
+
+  <rect x="366" y="98" width="248" height="224" rx="28" fill="#F8FBFF" stroke="#CBD9F7"/>
+  <text x="490" y="160" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700" fill="#0F172A">2. Transfer</text>
+  <text x="490" y="204" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" fill="#40577F">Send in XLM</text>
+
+  <rect x="678" y="98" width="248" height="224" rx="28" fill="#F8FBFF" stroke="#CBD9F7"/>
+  <text x="802" y="160" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700" fill="#0F172A">3. Verify</text>
+  <text x="802" y="204" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" fill="#40577F">On-chain hash</text>
+
+  <g stroke="#0F172A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M304 210H350"/>
+    <path d="M616 210H662"/>
+    <path d="M340 198L354 210L340 222" fill="none"/>
+    <path d="M652 198L666 210L652 222" fill="none"/>
+  </g>
+
+  <g class="mover" transform="translate(344 178)">
+    <circle cx="0" cy="32" r="22" fill="#0F172A"/>
+    <text x="0" y="39" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#F8FAFC">XLM</text>
+  </g>
+
+  <circle class="signal" cx="138" cy="272" r="9" fill="#8EAEF2"/>
+  <circle class="signal s2" cx="450" cy="272" r="9" fill="#8EAEF2"/>
+  <circle class="signal s3" cx="762" cy="272" r="9" fill="#8EAEF2"/>
+</svg>
