@@ -48,78 +48,157 @@
 }
 
 :root {
-  --brand: #185adb;
-  --brand-strong: #114ac2;
-  --brand-soft: #dbe8ff;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  /* 🎨 Playful & Creative Brand Colors */
+  --brand: #6366f1; /* Vibrant Indigo */
+  --brand-strong: #4f46e5; /* Deep Indigo */
+  --brand-soft: #e0e7ff; /* Soft Indigo Tint */
+
+  /* ✨ New Vibrant Accent Colors */
+  --accent-purple: #a855f7; /* Creative Purple */
+  --accent-pink: #ec4899; /* Playful Pink */
+  --accent-orange: #f97316; /* Energetic Orange */
+  --accent-teal: #14b8a6; /* Fresh Teal */
+  --accent-lime: #84cc16; /* Zesty Lime */
+  --accent-sky: #0ea5e9; /* Bright Sky Blue */
+
+  /* 🌈 Gradient Definitions */
+  --gradient-brand: linear-gradient(
+    135deg,
+    var(--brand) 0%,
+    var(--accent-purple) 100%
+  );
+  --gradient-warm: linear-gradient(
+    135deg,
+    var(--accent-orange) 0%,
+    var(--accent-pink) 100%
+  );
+  --gradient-cool: linear-gradient(
+    135deg,
+    var(--brand) 0%,
+    var(--accent-teal) 100%
+  );
+  --gradient-success: linear-gradient(
+    135deg,
+    var(--accent-teal) 0%,
+    var(--accent-lime) 100%
+  );
+  --gradient-bento: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.1) 0%,
+    rgba(168, 85, 247, 0.1) 100%
+  );
+
+  /* 📦 Base Colors */
+  --background: oklch(0.98 0.01 280); /* Very light warm gray */
+  --foreground: oklch(0.25 0.02 280);
+  --card: oklch(1 0 0 / 0.7); /* Semi-transparent white */
+  --card-foreground: oklch(0.25 0.02 280);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.25 0.02 280);
+  --primary: oklch(0.35 0.03 280);
+  --primary-foreground: oklch(0.98 0.01 280);
+  --secondary: oklch(0.95 0.01 280);
+  --secondary-foreground: oklch(0.35 0.03 280);
+  --muted: oklch(0.95 0.01 280);
+  --muted-foreground: oklch(0.55 0.02 280);
+  --accent: oklch(0.93 0.02 280);
+  --accent-foreground: oklch(0.35 0.03 280);
   --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(0.9 0.01 280);
+  --input: oklch(0.9 0.01 280);
+  --ring: var(--brand);
+
+  /* 📊 Chart Colors - Playful Palette */
+  --chart-1: oklch(0.65 0.25 280); /* Purple */
+  --chart-2: oklch(0.65 0.2 320); /* Pink */
+  --chart-3: oklch(0.65 0.2 30); /* Orange */
+  --chart-4: oklch(0.6 0.2 180); /* Teal */
+  --chart-5: oklch(0.6 0.2 120); /* Lime */
+
+  /* ⚡ Special Effects */
+  --glow-brand: 0 0 20px rgba(99, 102, 241, 0.3);
+  --glow-purple: 0 0 20px rgba(168, 85, 247, 0.3);
+  --glow-pink: 0 0 20px rgba(236, 72, 153, 0.3);
+  --glow-orange: 0 0 20px rgba(249, 115, 22, 0.3);
+
+  /* 📐 Radius */
+  --radius: 0.75rem;
+  --sidebar: oklch(0.98 0.01 280);
+  --sidebar-foreground: oklch(0.25 0.02 280);
+  --sidebar-primary: var(--brand);
+  --sidebar-primary-foreground: oklch(0.98 0.01 280);
+  --sidebar-accent: oklch(0.95 0.01 280);
+  --sidebar-accent-foreground: oklch(0.35 0.03 280);
+  --sidebar-border: oklch(0.9 0.01 280);
+  --sidebar-ring: var(--brand);
 }
 
 .dark {
-  --brand: #185adb;
-  --brand-strong: #114ac2;
-  --brand-soft: #1a3a5c;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.87 0.00 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.371 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* 🎨 Dark Mode - Vibrant & Playful */
+  --brand: #818cf8; /* Lighter Indigo */
+  --brand-strong: #6366f1;
+  --brand-soft: rgba(99, 102, 241, 0.2);
+
+  /* ✨ Dark Mode Accents Pop More */
+  --accent-purple: #c084fc;
+  --accent-pink: #f472b6;
+  --accent-orange: #fb923c;
+  --accent-teal: #2dd4bf;
+  --accent-lime: #a3e635;
+  --accent-sky: #38bdf8;
+
+  /* 🌈 Dark Gradients */
+  --gradient-brand: linear-gradient(135deg, var(--brand) 0%, #c084fc 100%);
+  --gradient-warm: linear-gradient(135deg, #fb923c 0%, #f472b6 100%);
+  --gradient-cool: linear-gradient(135deg, var(--brand) 0%, #2dd4bf 100%);
+  --gradient-success: linear-gradient(135deg, #2dd4bf 0%, #a3e635 100%);
+  --gradient-bento: linear-gradient(
+    135deg,
+    rgba(129, 140, 248, 0.15) 0%,
+    rgba(192, 132, 252, 0.15) 100%
+  );
+
+  /* 📦 Dark Base Colors */
+  --background: oklch(0.18 0.02 280); /* Dark warm gray */
+  --foreground: oklch(0.95 0.01 280);
+  --card: oklch(0.22 0.02 280 / 0.6); /* Semi-transparent dark */
+  --card-foreground: oklch(0.95 0.01 280);
+  --popover: oklch(0.22 0.02 280);
+  --popover-foreground: oklch(0.95 0.01 280);
+  --primary: oklch(0.9 0.01 280);
+  --primary-foreground: oklch(0.22 0.02 280);
+  --secondary: oklch(0.28 0.02 280);
+  --secondary-foreground: oklch(0.9 0.01 280);
+  --muted: oklch(0.28 0.02 280);
+  --muted-foreground: oklch(0.65 0.02 280);
+  --accent: oklch(0.3 0.02 280);
+  --accent-foreground: oklch(0.9 0.01 280);
+  --destructive: oklch(0.65 0.25 27);
+  --border: oklch(0.3 0.02 280);
+  --input: oklch(0.3 0.02 280);
+  --ring: var(--brand);
+
+  /* 📊 Dark Chart Colors */
+  --chart-1: oklch(0.75 0.2 280);
+  --chart-2: oklch(0.75 0.18 320);
+  --chart-3: oklch(0.75 0.18 30);
+  --chart-4: oklch(0.7 0.18 180);
+  --chart-5: oklch(0.7 0.18 120);
+
+  /* ⚡ Dark Glow Effects */
+  --glow-brand: 0 0 25px rgba(129, 140, 248, 0.4);
+  --glow-purple: 0 0 25px rgba(192, 132, 252, 0.4);
+  --glow-pink: 0 0 25px rgba(244, 114, 182, 0.4);
+  --glow-orange: 0 0 25px rgba(251, 146, 60, 0.4);
+
+  --sidebar: oklch(0.2 0.02 280);
+  --sidebar-foreground: oklch(0.95 0.01 280);
+  --sidebar-primary: var(--brand);
+  --sidebar-primary-foreground: oklch(0.95 0.01 280);
+  --sidebar-accent: oklch(0.28 0.02 280);
+  --sidebar-accent-foreground: oklch(0.9 0.01 280);
+  --sidebar-border: oklch(0.3 0.02 280);
+  --sidebar-ring: var(--brand);
 }
 
 @layer base {
@@ -133,29 +212,48 @@
 
 @layer utilities {
   .landing-grid {
-    background-image:
-      linear-gradient(to right, color-mix(in oklab, var(--brand) 9%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--brand) 9%, transparent) 1px, transparent 1px),
+    background-image: linear-gradient(
+        to right,
+        color-mix(in oklab, var(--brand) 9%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--brand) 9%, transparent) 1px,
+        transparent 1px
+      ),
       linear-gradient(180deg, #ffffff 0%, #f4f8ff 55%, #f0f5ff 100%);
-    background-size:
-      34px 34px,
-      34px 34px,
-      100% 100%;
+    background-size: 34px 34px, 34px 34px, 100% 100%;
   }
 
   .landing-glow {
-    background: radial-gradient(circle, color-mix(in oklab, var(--brand) 20%, white), transparent 70%);
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--brand) 20%, white),
+      transparent 70%
+    );
   }
 
   .dark .landing-grid {
-    background-image:
-      linear-gradient(to right, color-mix(in oklab, var(--brand) 18%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--brand) 18%, transparent) 1px, transparent 1px),
+    background-image: linear-gradient(
+        to right,
+        color-mix(in oklab, var(--brand) 18%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--brand) 18%, transparent) 1px,
+        transparent 1px
+      ),
       linear-gradient(180deg, #0e1322 0%, #0a0f1d 55%, #070b16 100%);
   }
 
   .dark .landing-glow {
-    background: radial-gradient(circle, color-mix(in oklab, var(--brand) 34%, black), transparent 70%);
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--brand) 34%, black),
+      transparent 70%
+    );
   }
 
   .animate-enter {
@@ -171,5 +269,329 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* 🎨 Playful Animations & Effects */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: var(--glow-brand);
+    opacity: 0.4;
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    opacity: 0.6;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes bounce-subtle {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+/* ✨ Bento Grid Utilities - Modern Design */
+.bento-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(180px, auto);
+}
+
+.bento-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  padding: 1.25rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.dark .bento-card {
+  background: linear-gradient(135deg, rgba(30, 30, 50, 0.9) 0%, rgba(20, 20, 40, 0.7) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Smaller bento card variant */
+.bento-card-small {
+  grid-row: span 1;
+  min-height: 180px;
+}
+
+.bento-card-small > * {
+  height: 100%;
+}
+
+/* Medium card - spans 2 rows */
+.bento-card-medium {
+  grid-row: span 2;
+}
+
+/* Large card - spans 2x2 */
+.bento-card-large {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+/* Gradient border effect */
+.bento-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.3) 0%, 
+    rgba(168, 85, 247, 0.3) 50%,
+    rgba(236, 72, 153, 0.3) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.bento-card:hover::before {
+  opacity: 1;
+}
+
+/* Hover effects */
+.bento-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 
+    0 12px 40px rgba(99, 102, 241, 0.15),
+    0 4px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.dark .bento-card:hover {
+  box-shadow: 
+    0 12px 40px rgba(99, 102, 241, 0.25),
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.bento-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Span utilities for bento grid */
+.bento-span-2 {
+  grid-column: span 2;
+}
+
+.bento-span-3 {
+  grid-column: span 3;
+}
+
+.bento-span-full {
+  grid-column: 1 / -1;
+}
+
+.bento-row-span-2 {
+  grid-row: span 2;
+}
+
+/* Resizable cards */
+.bento-resizable {
+  resize: both;
+  min-width: 350px;
+  min-height: 350px;
+  max-width: 100%;
+  overflow: auto;
+  position: relative;
+}
+
+.bento-resizable::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, var(--brand) 50%);
+  opacity: 0.3;
+  border-radius: 0 0 24px 0;
+}
+
+/* Gradient accent cards */
+.bento-card-accent {
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.1) 0%, 
+    rgba(168, 85, 247, 0.1) 100%);
+}
+
+.bento-card-gradient-purple {
+  background: linear-gradient(135deg, 
+    rgba(168, 85, 247, 0.15) 0%, 
+    rgba(236, 72, 153, 0.15) 100%);
+}
+
+.bento-card-gradient-blue {
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.15) 0%, 
+    rgba(59, 130, 246, 0.15) 100%);
+}
+
+.bento-card-gradient-green {
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.15) 0%, 
+    rgba(59, 130, 246, 0.15) 100%);
+}
+
+/* Glass morphism variant */
+.bento-card-glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.dark .bento-card-glass {
+  background: rgba(30, 30, 50, 0.4);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Animated shimmer effect */
+@keyframes shimmer-border {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bento-card-shimmer {
+  background-size: 200% 200%;
+  animation: shimmer-border 3s ease infinite;
+}
+
+/* 🌈 Gradient Backgrounds */
+.bg-gradient-brand {
+  background: var(--gradient-brand);
+}
+
+.bg-gradient-warm {
+  background: var(--gradient-warm);
+}
+
+.bg-gradient-cool {
+  background: var(--gradient-cool);
+}
+
+.bg-gradient-success {
+  background: var(--gradient-success);
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    var(--background) 50%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bento-span-2 {
+    grid-column: span 1;
+  }
+
+  .bento-grid {
+    grid-template-columns: 1fr;
   }
 }
