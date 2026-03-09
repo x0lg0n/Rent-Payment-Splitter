@@ -1,6 +1,6 @@
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { BlockchainIllustration } from "@/components/landing/illustrations";
 
 const steps = [
   {
@@ -22,19 +22,25 @@ const steps = [
 
 export function WorkflowSection() {
   return (
-    <section id="workflow" className="relative mx-auto w-full max-w-7xl px-6 py-24 md:px-10">
-      {/* Decorative blockchain illustration as background */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 -z-10 opacity-20 animate-pulse">
-        <BlockchainIllustration className="h-96 w-96 text-[var(--brand)]" />
-      </div>
-
-      <div className="mb-16 animate-in fade-in slide-in-from-left-4 duration-1000" style={{ animationFillMode: "both" }}>
-        <h2 className="text-4xl font-bold tracking-tighter md:text-5xl animate-in fade-in zoom-in-95 duration-700" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
-          How It Works
-        </h2>
-        <p className="mt-4 max-w-lg text-lg text-muted-foreground animate-in fade-in slide-in-from-left-4 duration-700" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
-          A simple three-step flow to connect, check balance, and send verified payments.
-        </p>
+    <section id="workflow" className="relative overflow-hidden rounded-[26px] border border-slate-200 bg-white/70 p-6 dark:border-slate-700 dark:bg-slate-900/55 md:p-8">
+      <div className="mb-8 grid gap-6 md:mb-12 md:grid-cols-[0.95fr_1.05fr] md:items-center">
+        <div className="animate-in fade-in slide-in-from-left-4 duration-1000" style={{ animationFillMode: "both" }}>
+          <h2 className="text-3xl font-bold tracking-tighter text-slate-950 dark:text-white md:text-4xl animate-in fade-in zoom-in-95 duration-700" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>
+            How It Works
+          </h2>
+          <p className="mt-3 max-w-lg text-base text-slate-600 dark:text-slate-300 animate-in fade-in slide-in-from-left-4 duration-700" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
+            A clear 3-step path from wallet connection to successful and verifiable transfers.
+          </p>
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-[#dbe6ff] bg-[#eef3ff] p-2 animate-in fade-in slide-in-from-right-4 duration-1000" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
+          <Image
+            src="/landing/workflow-map.svg"
+            alt="Three-step SplitRent workflow map"
+            width={980}
+            height={420}
+            className="h-auto w-full rounded-xl"
+          />
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -45,7 +51,7 @@ export function WorkflowSection() {
             style={{ animationDelay: `${0.1 + index * 0.1}s`, animationFillMode: "both" }}
           >
             <Card
-              className="relative border-white/70 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-white/5 overflow-hidden group hover:shadow-lg hover:shadow-[var(--brand)]/10 transition-all h-full"
+              className="relative overflow-hidden border-slate-200 bg-white/90 backdrop-blur group hover:shadow-lg hover:shadow-[var(--brand)]/10 transition-all h-full dark:border-slate-700 dark:bg-slate-900/65"
             >
               {/* Gradient on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
