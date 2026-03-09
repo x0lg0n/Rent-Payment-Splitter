@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 420" fill="none" role="img" aria-label="Trust and transparency snapshot">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EEF4FF"/>
+      <stop offset="100%" stop-color="#E3EBFF"/>
+    </linearGradient>
+    <style>
+      .hash { animation: slide 5s linear infinite; }
+      .lock { animation: bob 3.2s ease-in-out infinite; transform-origin: center; }
+      .dot { animation: blink 1.6s ease-in-out infinite; }
+      .dot.d2 { animation-delay: .25s; }
+      .dot.d3 { animation-delay: .5s; }
+      @keyframes slide { 0% { transform: translateX(0);} 50% { transform: translateX(210px);} 100% { transform: translateX(0);} }
+      @keyframes bob { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-7px);} }
+      @keyframes blink { 0%,100%{opacity:.45} 50%{opacity:1} }
+    </style>
+  </defs>
+
+  <rect width="880" height="420" rx="28" fill="url(#bg)"/>
+
+  <rect x="42" y="74" width="284" height="272" rx="24" fill="#F9FBFF" stroke="#CBD8F4"/>
+  <text x="72" y="128" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">Payment hash</text>
+  <rect x="72" y="150" width="222" height="34" rx="12" fill="#E9F0FF"/>
+  <g class="hash" transform="translate(0 0)">
+    <rect x="72" y="202" width="112" height="24" rx="8" fill="#A4BEF5"/>
+    <rect x="194" y="202" width="100" height="24" rx="8" fill="#0F172A"/>
+  </g>
+  <rect x="72" y="248" width="222" height="60" rx="16" fill="#0F172A"/>
+  <text x="183" y="285" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="600" fill="#F8FAFC">View on explorer</text>
+
+  <rect x="352" y="74" width="486" height="272" rx="24" fill="#F9FBFF" stroke="#CBD8F4"/>
+  <text x="382" y="128" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700" fill="#0F172A">Safety overview</text>
+
+  <g class="lock" transform="translate(422 166)">
+    <rect x="0" y="46" width="88" height="78" rx="20" fill="#0F172A"/>
+    <path d="M18 48V30C18 12 32 0 44 0C56 0 70 12 70 30V48" stroke="#0F172A" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="44" cy="84" r="8" fill="#F8FAFC"/>
+  </g>
+
+  <g transform="translate(560 170)">
+    <rect x="0" y="0" width="248" height="42" rx="14" fill="#E9F0FF"/>
+    <text x="16" y="27" font-family="Inter, Arial, sans-serif" font-size="18" fill="#334155">Escrow contract status</text>
+
+    <rect x="0" y="58" width="248" height="42" rx="14" fill="#E9F0FF"/>
+    <text x="16" y="85" font-family="Inter, Arial, sans-serif" font-size="18" fill="#334155">Recipient validation</text>
+
+    <rect x="0" y="116" width="248" height="42" rx="14" fill="#E9F0FF"/>
+    <text x="16" y="143" font-family="Inter, Arial, sans-serif" font-size="18" fill="#334155">Auto-refresh balance</text>
+  </g>
+
+  <circle class="dot" cx="816" cy="128" r="8" fill="#90B3F4"/>
+  <circle class="dot d2" cx="792" cy="128" r="8" fill="#90B3F4"/>
+  <circle class="dot d3" cx="768" cy="128" r="8" fill="#90B3F4"/>
+</svg>

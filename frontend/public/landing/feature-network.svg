@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" fill="none" role="img" aria-label="Decentralized network image">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EEF1FF"/>
+      <stop offset="100%" stop-color="#E2E8FF"/>
+    </linearGradient>
+    <style>
+      .node { animation: pulse 2.3s ease-in-out infinite; transform-origin: center; }
+      .node.n2 { animation-delay: .25s; }
+      .node.n3 { animation-delay: .5s; }
+      .node.n4 { animation-delay: .75s; }
+      .line { animation: glow 2.4s ease-in-out infinite; }
+      @keyframes pulse { 0%,100%{transform:scale(1);opacity:.75} 50%{transform:scale(1.16);opacity:1} }
+      @keyframes glow { 0%,100%{opacity:.45} 50%{opacity:1} }
+    </style>
+  </defs>
+
+  <rect width="640" height="420" rx="34" fill="url(#bg)"/>
+
+  <g class="line" stroke="#3C4D77" stroke-width="8" stroke-linecap="round">
+    <path d="M142 298L256 218"/>
+    <path d="M256 218L378 154"/>
+    <path d="M378 154L504 206"/>
+    <path d="M256 218L396 308"/>
+    <path d="M142 298L396 308"/>
+  </g>
+
+  <g>
+    <circle cx="142" cy="298" r="50" fill="#0F172A"/>
+    <text x="142" y="305" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#F8FAFC">A</text>
+
+    <circle cx="256" cy="218" r="54" fill="#ECF2FF" stroke="#0F172A" stroke-width="6"/>
+    <text x="256" y="225" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#0F172A">NODE</text>
+
+    <circle cx="378" cy="154" r="44" fill="#0F172A"/>
+    <text x="378" y="161" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700" fill="#F8FAFC">B</text>
+
+    <circle cx="504" cy="206" r="48" fill="#ECF2FF" stroke="#0F172A" stroke-width="6"/>
+    <text x="504" y="213" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700" fill="#0F172A">C</text>
+
+    <circle cx="396" cy="308" r="56" fill="#0F172A"/>
+    <text x="396" y="315" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700" fill="#F8FAFC">LEDGER</text>
+  </g>
+
+  <g>
+    <circle class="node" cx="142" cy="298" r="8" fill="#95B8FF"/>
+    <circle class="node n2" cx="256" cy="218" r="8" fill="#95B8FF"/>
+    <circle class="node n3" cx="378" cy="154" r="8" fill="#95B8FF"/>
+    <circle class="node n4" cx="504" cy="206" r="8" fill="#95B8FF"/>
+  </g>
+</svg>

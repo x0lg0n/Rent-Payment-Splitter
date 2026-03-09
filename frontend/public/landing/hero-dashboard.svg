@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" fill="none" role="img" aria-label="SplitRent dashboard preview">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EEF3FF"/>
+      <stop offset="100%" stop-color="#DDE7FF"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#F4F7FF" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+    <filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <style>
+      .float-a { animation: floatA 6s ease-in-out infinite; transform-origin: center; }
+      .float-b { animation: floatB 5.2s ease-in-out infinite; transform-origin: center; }
+      .pulse { animation: pulse 2.4s ease-in-out infinite; }
+      .bars rect { animation: barJump 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom; }
+      .bars rect:nth-child(2) { animation-delay: 0.2s; }
+      .bars rect:nth-child(3) { animation-delay: 0.35s; }
+      .bars rect:nth-child(4) { animation-delay: 0.5s; }
+      .bars rect:nth-child(5) { animation-delay: 0.65s; }
+      .bars rect:nth-child(6) { animation-delay: 0.8s; }
+      @keyframes floatA { 0%,100% { transform: translateY(0px);} 50% { transform: translateY(-8px);} }
+      @keyframes floatB { 0%,100% { transform: translateY(0px);} 50% { transform: translateY(10px);} }
+      @keyframes pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 0.7; } }
+      @keyframes barJump { 0%,100% { transform: scaleY(0.55); } 45% { transform: scaleY(1); } }
+    </style>
+  </defs>
+
+  <rect width="1200" height="780" rx="44" fill="url(#bg)"/>
+
+  <circle cx="155" cy="118" r="120" fill="#C7D7FF" opacity="0.65" filter="url(#blur)" class="pulse"/>
+  <circle cx="1040" cy="655" r="130" fill="#BDE2FF" opacity="0.6" filter="url(#blur)" class="pulse"/>
+
+  <g class="float-a">
+    <rect x="62" y="66" width="226" height="648" rx="34" fill="#AEBDE7"/>
+    <rect x="90" y="208" width="170" height="54" rx="27" fill="#0F172A"/>
+    <rect x="90" y="286" width="156" height="16" rx="8" fill="#23314A" opacity="0.7"/>
+    <rect x="90" y="328" width="120" height="16" rx="8" fill="#23314A" opacity="0.5"/>
+    <rect x="90" y="370" width="132" height="16" rx="8" fill="#23314A" opacity="0.5"/>
+    <rect x="90" y="412" width="110" height="16" rx="8" fill="#23314A" opacity="0.45"/>
+    <rect x="90" y="560" width="170" height="100" rx="20" fill="#C5D0EF"/>
+  </g>
+
+  <g class="float-b">
+    <rect x="322" y="66" width="816" height="648" rx="36" fill="url(#panel)" stroke="#CAD8F5"/>
+
+    <rect x="362" y="122" width="520" height="210" rx="30" fill="#AEBDE7"/>
+    <text x="396" y="172" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600" fill="#1E293B">Available balance</text>
+    <text x="396" y="236" font-family="Inter, Arial, sans-serif" font-size="64" font-weight="700" fill="#0F172A">19,898.18 XLM</text>
+    <g>
+      <rect x="396" y="264" width="146" height="44" rx="22" fill="url(#accent)"/>
+      <rect x="556" y="264" width="146" height="44" rx="22" fill="#DDE5F9"/>
+      <rect x="716" y="264" width="146" height="44" rx="22" fill="#DDE5F9"/>
+      <text x="468" y="292" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="#F8FAFC">Send</text>
+      <text x="628" y="292" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="600" fill="#334155">Request</text>
+      <text x="788" y="292" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="600" fill="#334155">Split bill</text>
+    </g>
+
+    <rect x="362" y="354" width="378" height="154" rx="26" fill="#F8FAFF" stroke="#D7E1F7"/>
+    <text x="392" y="404" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="700" fill="#0F172A">Quick transfer</text>
+    <rect x="392" y="430" width="300" height="44" rx="22" fill="#E5ECFD"/>
+
+    <rect x="760" y="354" width="338" height="154" rx="26" fill="#F8FAFF" stroke="#D7E1F7"/>
+    <text x="790" y="404" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="700" fill="#0F172A">Statistics</text>
+    <g class="bars" transform="translate(792 432)">
+      <rect x="0" y="34" width="24" height="46" rx="10" fill="#93B1F5"/>
+      <rect x="34" y="14" width="24" height="66" rx="10" fill="#0F172A"/>
+      <rect x="68" y="40" width="24" height="40" rx="10" fill="#93B1F5"/>
+      <rect x="102" y="20" width="24" height="60" rx="10" fill="#0F172A"/>
+      <rect x="136" y="32" width="24" height="48" rx="10" fill="#93B1F5"/>
+      <rect x="170" y="8" width="24" height="72" rx="10" fill="#0F172A"/>
+    </g>
+
+    <rect x="362" y="532" width="736" height="146" rx="26" fill="#F8FAFF" stroke="#D7E1F7"/>
+    <text x="392" y="584" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="700" fill="#0F172A">Transactions</text>
+    <rect x="392" y="604" width="674" height="50" rx="20" fill="#E8EEFD"/>
+    <circle cx="424" cy="629" r="10" fill="#0F172A"/>
+  </g>
+</svg>

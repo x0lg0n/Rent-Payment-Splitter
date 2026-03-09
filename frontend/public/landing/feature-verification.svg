@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" fill="none" role="img" aria-label="Verification image">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EEF4FF"/>
+      <stop offset="100%" stop-color="#DDE8FF"/>
+    </linearGradient>
+    <style>
+      .shield { animation: bob 4.4s ease-in-out infinite; transform-origin: center; }
+      .ring { animation: pulse 2.8s ease-in-out infinite; transform-origin: center; }
+      .check { animation: fade 2s ease-in-out infinite; }
+      @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+      @keyframes pulse { 0%,100%{opacity:0.2;transform:scale(1)} 50%{opacity:0.45;transform:scale(1.06)} }
+      @keyframes fade { 0%,100%{opacity:0.45} 50%{opacity:1} }
+    </style>
+  </defs>
+
+  <rect width="640" height="420" rx="34" fill="url(#bg)"/>
+  <circle cx="320" cy="214" r="138" class="ring" fill="#8FAEE9"/>
+  <circle cx="320" cy="214" r="120" fill="#E8F0FF"/>
+
+  <g class="shield">
+    <path d="M320 90L428 132V224C428 290 380 338 320 366C260 338 212 290 212 224V132L320 90Z" fill="#0F172A"/>
+    <path d="M320 126L392 154V220C392 266 360 304 320 330C280 304 248 266 248 220V154L320 126Z" fill="#ECF2FF"/>
+    <path class="check" d="M281 224L308 252L360 194" stroke="#0F172A" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g opacity="0.55">
+    <circle cx="132" cy="102" r="12" fill="#0F172A"/>
+    <circle cx="520" cy="316" r="10" fill="#0F172A"/>
+    <circle cx="500" cy="98" r="8" fill="#3B4F72"/>
+  </g>
+</svg>
