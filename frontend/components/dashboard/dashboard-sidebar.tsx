@@ -104,7 +104,7 @@ export function DashboardSidebar({
     <aside
       className={cn(
         "z-30 flex w-full flex-col rounded-[30px] border border-white/70 bg-[#b8c4e9]/78 p-4 shadow-[0_20px_60px_rgba(60,88,163,0.18)] backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-slate-900/78 lg:fixed lg:top-6 lg:left-[max(0.75rem,calc((100vw-1500px)/2+0.75rem))] lg:h-[calc(100vh-3rem)]",
-        isCollapsed ? "lg:w-[96px] lg:p-3" : "lg:w-[260px] lg:p-5",
+        isCollapsed ? "lg:w-24 lg:p-3" : "lg:w-65 lg:p-5",
       )}
     >
       <div className={cn("relative flex items-center", isCollapsed ? "justify-center" : "justify-between")}>

@@ -39,7 +39,7 @@ export function PaymentSuccessDialog({
               href={`${explorerBaseUrl}/${hash ?? ""}`}
               target="_blank"
               rel="noreferrer"
-              className="break-all text-[var(--brand)] underline underline-offset-4"
+              className="break-all text-(--brand) underline underline-offset-4"
             >
               {hash}
             </a>

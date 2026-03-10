@@ -21,7 +21,7 @@ export function ToastStack({ toasts, onRemove }: ToastStackProps) {
       aria-live="polite"
       aria-label="Notifications"
       role="status"
-      className="pointer-events-none fixed right-4 top-16 z-[70] flex w-[min(92vw,360px)] flex-col gap-2"
+      className="pointer-events-none fixed right-4 top-16 z-70 flex w-[min(92vw,360px)] flex-col gap-2"
     >
       {toasts.map((toast) => (
         <Card
