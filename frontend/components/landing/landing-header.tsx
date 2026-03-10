@@ -21,7 +21,7 @@ export function LandingHeader({ onConnectClick }: LandingHeaderProps) {
     <header className="border-b border-white/35 bg-white/70 backdrop-blur-md dark:border-white/10 dark:bg-slate-900/45">
       <div className="mx-auto flex w-full items-center justify-between px-4 py-3 md:px-6">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand-soft)]">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--brand) text-white shadow-lg">
             <Wallet className="h-4 w-4" />
           </div>
           <div>

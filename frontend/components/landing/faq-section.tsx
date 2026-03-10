@@ -57,7 +57,7 @@ export function FaqSection() {
             value={`faq-${idx}`}
             className="border-b border-slate-200 dark:border-slate-700"
           >
-            <AccordionTrigger className="py-5 text-left text-base font-semibold hover:text-[var(--brand)] transition-colors">
+            <AccordionTrigger className="py-5 text-left text-base font-semibold hover:text-(--brand) transition-colors">
               {item.q}
             </AccordionTrigger>
             <AccordionContent className="pb-5 text-sm leading-relaxed text-muted-foreground">

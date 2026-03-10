@@ -1,11 +1,21 @@
 import { ExternalLink, Clock, Share2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DepositProgress } from "./deposit-progress";
 import { ParticipantList } from "./participant-list";
 import { EscrowTimeline } from "./escrow-timeline";
-import type { EscrowData, EscrowStatus as EscrowStatusType } from "@/lib/stellar/contract";
+import type {
+  EscrowData,
+  EscrowStatus as EscrowStatusType,
+  Participant,
+} from "@/lib/stellar/contract";
 
 interface EscrowStatusCardProps {
   escrow: EscrowData;
@@ -30,24 +40,37 @@ export function EscrowStatusCard({
     return new Date(Number(timestamp) * 1000).toLocaleDateString();
   };
 
-  const depositedCount = escrow.participants.filter(p => p.deposited).length;
+  const depositedCount = escrow.participants.filter(
+    (p: Participant) => p.status === "Deposited"
+  ).length;
   const isFullyFunded = depositedCount === escrow.participants.length;
-  const isCurrentUserDeposited = escrow.participants.find(
-    p => p.address === currentUserId
-  )?.deposited;
+  const isCurrentUserDeposited =
+    escrow.participants.find((p: Participant) => p.address === currentUserId)
+      ?.status === "Deposited";
 
   const getStatusColor = (status: EscrowStatusType) => {
     switch (status) {
-      case "Active": return "bg-blue-500";
-      case "FullyFunded": return "bg-green-500";
-      case "Released": return "bg-purple-500";
-      case "Refunded": return "bg-gray-500";
-      case "Disputed": return "bg-red-500";
-      default: return "bg-gray-500";
+      case "Active":
+        return "bg-blue-500";
+      case "FullyFunded":
+        return "bg-green-500";
+      case "Released":
+        return "bg-purple-500";
+      case "Refunded":
+        return "bg-gray-500";
+      case "Disputed":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
-  const getTimelineSteps = (): Array<{ id: string; label: string; status: "completed" | "current" | "pending"; description?: string }> => {
+  const getTimelineSteps = (): Array<{
+    id: string;
+    label: string;
+    status: "completed" | "current" | "pending";
+    description?: string;
+  }> => {
     const steps = [
       {
         id: "created",
@@ -58,20 +81,27 @@ export function EscrowStatusCard({
       {
         id: "deposits",
         label: "Collecting Deposits",
-        status: isFullyFunded ? "completed" as const : "current" as const,
+        status: isFullyFunded ? ("completed" as const) : ("current" as const),
         description: `${depositedCount}/${escrow.participants.length} deposited`,
       },
       {
         id: "release",
         label: "Release to Landlord",
-        status: escrow.status === "Released" ? "completed" as const : 
-                isFullyFunded ? "current" as const : "pending" as const,
+        status:
+          escrow.status === "Released"
+            ? ("completed" as const)
+            : isFullyFunded
+            ? ("current" as const)
+            : ("pending" as const),
         description: "Funds transferred when fully funded",
       },
       {
         id: "complete",
         label: "Complete",
-        status: escrow.status === "Released" ? "completed" as const : "pending" as const,
+        status:
+          escrow.status === "Released"
+            ? ("completed" as const)
+            : ("pending" as const),
         description: "Escrow closed",
       },
     ];
@@ -80,7 +110,8 @@ export function EscrowStatusCard({
   };
 
   const isLandlord = currentUserId === escrow.landlord;
-  const canRelease = isLandlord && isFullyFunded && escrow.status !== "Released";
+  const canRelease =
+    isLandlord && isFullyFunded && escrow.status !== "Released";
 
   return (
     <Card className="border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/5">
@@ -89,14 +120,18 @@ export function EscrowStatusCard({
           <div>
             <CardTitle className="flex items-center gap-2">
               Escrow #{escrow.id.toString().slice(-6)}
-              <div className={`h-3 w-3 rounded-full ${getStatusColor(escrow.status)}`} />
+              <div
+                className={`h-3 w-3 rounded-full ${getStatusColor(
+                  escrow.status
+                )}`}
+              />
               <Badge variant="secondary">{escrow.status}</Badge>
             </CardTitle>
             <CardDescription>
               Created {formatDate(escrow.created_at)}
             </CardDescription>
           </div>
-          
+
           <div className="flex gap-2">
             <Button variant="outline" size="sm">
               <Share2 className="h-4 w-4" />
@@ -109,7 +144,7 @@ export function EscrowStatusCard({
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         {/* Progress */}
         <DepositProgress
@@ -127,7 +162,9 @@ export function EscrowStatusCard({
               Deadline: {formatDate(escrow.deadline)}
             </p>
             <p className="text-xs text-amber-700 dark:text-amber-300">
-              {isFullyFunded ? "Fully funded - ready to release" : "Deposits still being collected"}
+              {isFullyFunded
+                ? "Fully funded - ready to release"
+                : "Deposits still being collected"}
             </p>
           </div>
         </div>
@@ -144,22 +181,32 @@ export function EscrowStatusCard({
         {/* Actions */}
         <div className="flex gap-2 pt-4">
           {!isCurrentUserDeposited && onDeposit && (
-            <Button onClick={onDeposit} className="flex-1 min-h-[44px]">
-              Deposit {formatAmount(
-                escrow.participants.find(p => p.address === currentUserId)?.share_amount || BigInt(0)
-              )} XLM
+            <Button onClick={onDeposit} className="flex-1 min-h-11">
+              Deposit{" "}
+              {formatAmount(
+                escrow.participants.find(
+                  (p: Participant) => p.address === currentUserId
+                )?.share_amount || BigInt(0)
+              )}{" "}
+              XLM
             </Button>
           )}
-          
+
           {canRelease && onRelease && (
-            <Button onClick={onRelease} className="flex-1 min-h-[44px]" variant="default">
+            <Button
+              onClick={onRelease}
+              className="flex-1 min-h-11"
+              variant="default">
               Release Funds to Landlord
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
-          
+
           {onViewDetails && (
-            <Button variant="outline" onClick={onViewDetails} className="min-h-[44px]">
+            <Button
+              variant="outline"
+              onClick={onViewDetails}
+              className="min-h-11">
               View Details
             </Button>
           )}

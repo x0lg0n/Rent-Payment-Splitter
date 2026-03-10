@@ -58,7 +58,7 @@ export function ServiceInfoSection() {
               style={{ animationDelay: `${0.1 + index * 0.08}s` }}
             >
               <div className="mb-2 flex items-center gap-2 text-slate-900 dark:text-white">
-                <item.icon className="h-4 w-4 text-[var(--brand)]" />
+                <item.icon className="h-4 w-4 text-(--brand)" />
                 <h3 className="text-base font-semibold">{item.title}</h3>
               </div>
               <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{item.text}</p>
@@ -90,7 +90,7 @@ export function ServiceInfoSection() {
             {infoCards.map((card) => (
               <div key={card.title} className="rounded-2xl border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/70">
                 <div className="mb-2 flex items-center gap-2">
-                  <card.icon className="h-4 w-4 text-[var(--brand)]" />
+                  <card.icon className="h-4 w-4 text-(--brand)" />
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">{card.title}</p>
                 </div>
                 <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{card.text}</p>

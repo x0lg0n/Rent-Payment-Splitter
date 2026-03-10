@@ -15,10 +15,10 @@ export function EscrowBanner({
 }: EscrowBannerProps) {
   if (activeEscrowsCount === 0) {
     return (
-      <Card className="border-2 border-dashed border-[var(--brand)]/30 bg-gradient-to-r from-[var(--brand)]/5 to-sky-500/5">
+      <Card className="border-2 border-dashed border-(--brand)/30 bg-linear-to-r from-(--brand)/5 to-sky-500/5">
         <CardContent className="flex flex-col items-center justify-center gap-4 p-8 md:flex-row">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand)]/10">
-            <Users className="h-8 w-8 text-[var(--brand)]" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--brand)/10">
+            <Users className="h-8 w-8 text-(--brand)" />
           </div>
           
           <div className="flex-1 text-center md:text-left">
@@ -28,7 +28,7 @@ export function EscrowBanner({
             </p>
           </div>
           
-          <Button onClick={onCreateClick} className="min-h-[44px]">
+          <Button onClick={onCreateClick} className="min-h-11">
             <Plus className="mr-2 h-4 w-4" />
             Create Escrow
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -39,11 +39,11 @@ export function EscrowBanner({
   }
 
   return (
-    <Card className="border-[var(--brand)]/30 bg-gradient-to-r from-[var(--brand)]/10 to-sky-500/10">
+    <Card className="border-(--brand)/30 bg-linear-to-r from-(--brand)/10 to-sky-500/10">
       <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--brand)]/20">
-            <Users className="h-6 w-6 text-[var(--brand)]" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-(--brand)/20">
+            <Users className="h-6 w-6 text-(--brand)" />
           </div>
           
           <div>
@@ -62,11 +62,11 @@ export function EscrowBanner({
           <Button 
             variant="outline" 
             onClick={onViewAllClick}
-            className="min-h-[44px]"
+            className="min-h-11"
           >
             View All
           </Button>
-          <Button onClick={onCreateClick} className="min-h-[44px]">
+          <Button onClick={onCreateClick} className="min-h-11">
             <Plus className="mr-2 h-4 w-4" />
             Create New
           </Button>

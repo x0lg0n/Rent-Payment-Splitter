@@ -46,10 +46,10 @@ export function FeaturesSection() {
               style={{ animationDelay: `${0.1 + index * 0.1}s`, animationFillMode: "both" }}
             >
               <Card
-                className="group relative overflow-hidden border-slate-200 bg-white/90 backdrop-blur transition-all hover:shadow-lg hover:shadow-[var(--brand)]/10 h-full dark:border-slate-700 dark:bg-slate-900/65"
+                className="group relative overflow-hidden border-slate-200 bg-white/90 backdrop-blur transition-all hover:shadow-lg hover:shadow-(--brand)/10 h-full dark:border-slate-700 dark:bg-slate-900/65"
               >
                 {/* Gradient background on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-linear-0-to-br from-(--brand)/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                 <CardHeader className="relative space-y-4 pb-6">
                   <div className="overflow-hidden rounded-2xl border border-[#d7e4ff] bg-white/70">
@@ -63,7 +63,7 @@ export function FeaturesSection() {
                   </div>
 
                   <div className="space-y-2">
-                    <CardTitle className="text-xl group-hover:text-[var(--brand)] transition-colors">{feature.title}</CardTitle>
+                    <CardTitle className="text-xl group-hover:text-(--brand) transition-colors">{feature.title}</CardTitle>
                     <CardDescription className="text-sm leading-relaxed">
                       {feature.description}
                     </CardDescription>

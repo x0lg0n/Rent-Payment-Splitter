@@ -26,7 +26,7 @@ export function HeroSection({ onConnectClick }: HeroSectionProps) {
             <h1 className="text-4xl font-black leading-tight tracking-tighter text-slate-950 dark:text-white md:text-5xl lg:text-6xl animate-in fade-in slide-in-from-left-8 duration-1000" style={{ animationDelay: "0.2s", animationFillMode: "both" }}>
               Rent Payments
               <br />
-              <span className="bg-gradient-to-r from-slate-900 via-[var(--brand)] to-sky-500 bg-clip-text text-transparent dark:from-white">
+              <span className="bg-linear-0-to-r from-slate-900 via-(--brand) to-sky-500 bg-clip-text text-transparent dark:from-white">
                 Made Simple
               </span>
             </h1>

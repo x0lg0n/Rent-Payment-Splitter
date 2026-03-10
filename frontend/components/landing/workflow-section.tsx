@@ -51,25 +51,25 @@ export function WorkflowSection() {
             style={{ animationDelay: `${0.1 + index * 0.1}s`, animationFillMode: "both" }}
           >
             <Card
-              className="relative overflow-hidden border-slate-200 bg-white/90 backdrop-blur group hover:shadow-lg hover:shadow-[var(--brand)]/10 transition-all h-full dark:border-slate-700 dark:bg-slate-900/65"
+              className="relative overflow-hidden border-slate-200 bg-white/90 backdrop-blur group hover:shadow-lg hover:shadow-(--brand)/10 transition-all h-full dark:border-slate-700 dark:bg-slate-900/65"
             >
               {/* Gradient on hover */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-linear-0-to-br from-(--brand)/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
               <CardHeader className="relative space-y-4">
                 <div className="flex items-center justify-between">
-                  <Badge className="bg-[var(--brand-soft)] text-[var(--brand)] dark:bg-white/10 dark:text-cyan-300 text-lg px-3 py-1 group-hover:scale-105 transition-transform">
+                  <Badge className="bg-(--brand-soft) text-(--brand) dark:bg-white/10 dark:text-cyan-300 text-lg px-3 py-1 group-hover:scale-105 transition-transform">
                     {item.step}
                   </Badge>
                   <div className="text-sm font-medium text-muted-foreground">
                     {item.step < 3 && (
-                      <span className="hidden md:inline text-[var(--brand)] opacity-50 group-hover:opacity-100 transition-opacity">→</span>
+                      <span className="hidden md:inline text-(--brand) opacity-50 group-hover:opacity-100 transition-opacity">→</span>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <CardTitle className="text-xl mb-2 group-hover:text-[var(--brand)] transition-colors">{item.title}</CardTitle>
+                  <CardTitle className="text-xl mb-2 group-hover:text-(--brand) transition-colors">{item.title}</CardTitle>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {item.description}
                   </p>
