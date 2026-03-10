@@ -421,7 +421,7 @@ export default function DashboardPage() {
                 Clear
               </Button>
             ) : (
-              <div className="w-[72px]" />
+              <div className="w-18" />
             )}
           </div>
 
@@ -510,7 +510,7 @@ export default function DashboardPage() {
               </form>
             </div>
           ) : (
-            <div className="mx-auto mt-4 flex min-h-[328px] w-full max-w-2xl flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50/70 p-6 text-center dark:border-slate-700 dark:bg-slate-800/45">
+            <div className="mx-auto mt-4 flex min-h-82 w-full max-w-2xl flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50/70 p-6 text-center dark:border-slate-700 dark:bg-slate-800/45">
               <span className="grid h-12 w-12 place-items-center rounded-full bg-slate-950 text-white dark:bg-white dark:text-slate-900">
                 <QrCode className="h-5 w-5" />
               </span>

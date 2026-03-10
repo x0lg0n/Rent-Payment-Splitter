@@ -41,21 +41,34 @@ const WALLET_INSTALL_URLS: Record<string, string> = {
   rabet: "https://rabet.app/",
 };
 
-const getWalletInstallUrl = (walletId: string) => WALLET_INSTALL_URLS[walletId] || "https://stellar.org/wallets";
+const getWalletInstallUrl = (walletId: string) =>
+  WALLET_INSTALL_URLS[walletId] || "https://stellar.org/wallets";
 
-export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, currentWalletId }: WalletSelectorProps) {
-  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(currentWalletId ?? lastWalletId ?? SUPPORTED_WALLETS[0]?.id ?? null);
-  const [walletStatuses, setWalletStatuses] = useState<Record<string, WalletStatus>>({});
+export function WalletSelector({
+  isOpen,
+  onClose,
+  onSelect,
+  lastWalletId,
+  currentWalletId,
+}: WalletSelectorProps) {
+  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(
+    currentWalletId ?? lastWalletId ?? SUPPORTED_WALLETS[0]?.id ?? null
+  );
+  const [walletStatuses, setWalletStatuses] = useState<
+    Record<string, WalletStatus>
+  >({});
   const [isCheckingWallets, setIsCheckingWallets] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const firstWalletButtonRef = useRef<HTMLButtonElement>(null);
+  const firstWalletButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
     setError(null);
-    setSelectedWalletId(currentWalletId ?? lastWalletId ?? SUPPORTED_WALLETS[0]?.id ?? null);
+    setSelectedWalletId(
+      currentWalletId ?? lastWalletId ?? SUPPORTED_WALLETS[0]?.id ?? null
+    );
   }, [isOpen, currentWalletId, lastWalletId]);
 
   useEffect(() => {
@@ -69,7 +82,7 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
         SUPPORTED_WALLETS.map((wallet) => [
           wallet.id,
           { isInstalled: null, installUrl: getWalletInstallUrl(wallet.id) },
-        ]),
+        ])
       ) as Record<string, WalletStatus>;
       setWalletStatuses(fallback);
 
@@ -79,7 +92,9 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
 
         const next = Object.fromEntries(
           SUPPORTED_WALLETS.map((wallet) => {
-            const match = availableWallets.find((item) => item.id === wallet.id);
+            const match = availableWallets.find(
+              (item) => item.id === wallet.id
+            );
             return [
               wallet.id,
               {
@@ -87,7 +102,7 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
                 installUrl: match?.url || getWalletInstallUrl(wallet.id),
               },
             ];
-          }),
+          })
         ) as Record<string, WalletStatus>;
 
         setWalletStatuses(next);
@@ -96,8 +111,12 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
           if (current && next[current]?.isInstalled !== false) {
             return current;
           }
-          const firstInstalled = SUPPORTED_WALLETS.find((wallet) => next[wallet.id]?.isInstalled !== false);
-          return firstInstalled?.id ?? current ?? SUPPORTED_WALLETS[0]?.id ?? null;
+          const firstInstalled = SUPPORTED_WALLETS.find(
+            (wallet) => next[wallet.id]?.isInstalled !== false
+          );
+          return (
+            firstInstalled?.id ?? current ?? SUPPORTED_WALLETS[0]?.id ?? null
+          );
         });
       } catch {
         if (!cancelled) {
@@ -118,20 +137,26 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
   }, [isOpen]);
 
   const selectedWallet = useMemo(
-    () => SUPPORTED_WALLETS.find((wallet) => wallet.id === selectedWalletId) ?? null,
-    [selectedWalletId],
+    () =>
+      SUPPORTED_WALLETS.find((wallet) => wallet.id === selectedWalletId) ??
+      null,
+    [selectedWalletId]
   );
 
-  const selectedStatus = selectedWalletId ? walletStatuses[selectedWalletId] : undefined;
+  const selectedStatus = selectedWalletId
+    ? walletStatuses[selectedWalletId]
+    : undefined;
   const selectedWalletUnavailable = selectedStatus?.isInstalled === false;
 
   const openInstallLink = (walletId: string) => {
-    const url = walletStatuses[walletId]?.installUrl || getWalletInstallUrl(walletId);
+    const url =
+      walletStatuses[walletId]?.installUrl || getWalletInstallUrl(walletId);
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const getInstallDomain = (walletId: string) => {
-    const url = walletStatuses[walletId]?.installUrl || getWalletInstallUrl(walletId);
+    const url =
+      walletStatuses[walletId]?.installUrl || getWalletInstallUrl(walletId);
     try {
       return new URL(url).hostname.replace(/^www\./, "");
     } catch {
@@ -145,7 +170,10 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
     if (walletStatuses[walletId]?.isInstalled === false) {
       openInstallLink(walletId);
       setError(
-        `${SUPPORTED_WALLETS.find((wallet) => wallet.id === walletId)?.name || "Selected wallet"} is not detected. Install it and try again.`,
+        `${
+          SUPPORTED_WALLETS.find((wallet) => wallet.id === walletId)?.name ||
+          "Selected wallet"
+        } is not detected. Install it and try again.`
       );
       return;
     }
@@ -182,8 +210,7 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           window.setTimeout(() => firstWalletButtonRef.current?.focus(), 0);
-        }}
-      >
+        }}>
         <div className="rounded-[18px] border border-transparent p-5 md:p-6">
           <AlertDialogHeader className="flex flex-row items-start justify-between gap-4 text-left">
             <div>
@@ -194,16 +221,24 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
                 Choose one Stellar wallet and connect directly.
               </AlertDialogDescription>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-8 w-8 rounded-full">
               <X className="h-4 w-4" />
             </Button>
           </AlertDialogHeader>
 
           {currentWalletId && (
             <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/90 px-4 py-3 text-sm dark:border-emerald-900/50 dark:bg-emerald-950/30">
-              <p className="font-medium text-emerald-700 dark:text-emerald-300">Currently connected</p>
+              <p className="font-medium text-emerald-700 dark:text-emerald-300">
+                Currently connected
+              </p>
               <p className="mt-0.5 text-emerald-800 dark:text-emerald-200">
-                {SUPPORTED_WALLETS.find((wallet) => wallet.id === currentWalletId)?.name || "Wallet"}
+                {SUPPORTED_WALLETS.find(
+                  (wallet) => wallet.id === currentWalletId
+                )?.name || "Wallet"}
               </p>
             </div>
           )}
@@ -213,18 +248,21 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
               type="button"
               onClick={handleQuickReconnect}
               disabled={isConnecting || isCheckingWallets}
-              className="group mt-4 flex w-full items-center justify-between rounded-2xl border border-[#c9d7f7] bg-white/85 px-4 py-3 text-left transition hover:border-slate-300 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900/70 dark:hover:bg-slate-900"
-            >
+              className="group mt-4 flex w-full items-center justify-between rounded-2xl border border-[#c9d7f7] bg-white/85 px-4 py-3 text-left transition hover:border-slate-300 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900/70 dark:hover:bg-slate-900">
               <div>
-                <p className="text-sm font-medium text-slate-800 dark:text-slate-100">Quick reconnect</p>
+                <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
+                  Quick reconnect
+                </p>
                 <p className="text-xs text-slate-600 dark:text-slate-300">
-                  {SUPPORTED_WALLETS.find((wallet) => wallet.id === lastWalletId)?.name || "Last wallet"}
+                  {SUPPORTED_WALLETS.find(
+                    (wallet) => wallet.id === lastWalletId
+                  )?.name || "Last wallet"}
                 </p>
               </div>
               <RotateCcw
                 className={cn(
-                  "h-4 w-4 text-slate-600 transition-transform duration-500 group-hover:rotate-[220deg] dark:text-slate-300",
-                  isConnecting && "animate-spin",
+                  "h-4 w-4 text-slate-600 transition-transform duration-500 group-hover:rotate-220 dark:text-slate-300",
+                  isConnecting && "animate-spin"
                 )}
               />
             </button>
@@ -232,7 +270,9 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
 
           <div className="mt-4 rounded-2xl border border-[#c9d7f7] bg-white/75 p-3 dark:border-slate-700 dark:bg-slate-900/70">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-300">Available wallets</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-300">
+                Available wallets
+              </p>
               {isCheckingWallets && (
                 <span className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-300">
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -269,9 +309,8 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
                       "group flex min-h-14 items-center justify-between rounded-xl border px-3 py-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400",
                       isSelected
                         ? "border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-900"
-                        : "border-slate-200 bg-white text-slate-900 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-500",
-                    )}
-                  >
+                        : "border-slate-200 bg-white text-slate-900 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:border-slate-500"
+                    )}>
                     <div className="flex items-center gap-3">
                       <span className="grid h-8 w-8 place-items-center rounded-lg bg-slate-100 text-lg dark:bg-slate-800">
                         {wallet.icon}
@@ -280,7 +319,10 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
                         <p className="text-sm font-semibold">{wallet.name}</p>
                         {isInstalled === false ? (
                           <a
-                            href={status?.installUrl || getWalletInstallUrl(wallet.id)}
+                            href={
+                              status?.installUrl ||
+                              getWalletInstallUrl(wallet.id)
+                            }
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(event) => event.stopPropagation()}
@@ -288,15 +330,22 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
                               "mt-0.5 inline-flex items-center gap-1 text-xs underline underline-offset-2",
                               isSelected
                                 ? "text-white/85 dark:text-slate-700"
-                                : "text-sky-700 dark:text-sky-300",
-                            )}
-                          >
+                                : "text-sky-700 dark:text-sky-300"
+                            )}>
                             Install from {getInstallDomain(wallet.id)}
                             <ExternalLink className="h-3 w-3" />
                           </a>
                         ) : (
-                          <p className={cn("text-xs", isSelected ? "text-white/80 dark:text-slate-700" : "text-slate-500 dark:text-slate-300")}>
-                            {isInstalled === true ? "Installed" : "Detection pending"}
+                          <p
+                            className={cn(
+                              "text-xs",
+                              isSelected
+                                ? "text-white/80 dark:text-slate-700"
+                                : "text-slate-500 dark:text-slate-300"
+                            )}>
+                            {isInstalled === true
+                              ? "Installed"
+                              : "Detection pending"}
                           </p>
                         )}
                       </div>
@@ -304,13 +353,27 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
 
                     <div className="flex items-center gap-2">
                       {isCurrent && (
-                        <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium", isSelected ? "bg-white/20 text-white dark:bg-slate-900/10 dark:text-slate-900" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300")}>
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium",
+                            isSelected
+                              ? "bg-white/20 text-white dark:bg-slate-900/10 dark:text-slate-900"
+                              : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                          )}>
                           <Check className="h-3 w-3" />
                           Connected
                         </span>
                       )}
                       {isSelected && !isCurrent && (
-                        <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium", isSelected ? "bg-white/20 text-white dark:bg-slate-900/10 dark:text-slate-900" : "")}>Selected</span>
+                        <span
+                          className={cn(
+                            "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                            isSelected
+                              ? "bg-white/20 text-white dark:bg-slate-900/10 dark:text-slate-900"
+                              : ""
+                          )}>
+                          Selected
+                        </span>
                       )}
                     </div>
                   </div>
@@ -333,15 +396,13 @@ export function WalletSelector({ isOpen, onClose, onSelect, lastWalletId, curren
               variant="outline"
               className="rounded-full border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900"
               onClick={onClose}
-              disabled={isConnecting}
-            >
+              disabled={isConnecting}>
               Cancel
             </Button>
             <Button
               className="rounded-full bg-slate-950 px-5 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
               disabled={!selectedWalletId || isConnecting || isCheckingWallets}
-              onClick={handleConnect}
-            >
+              onClick={handleConnect}>
               {isConnecting ? (
                 <span className="inline-flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
