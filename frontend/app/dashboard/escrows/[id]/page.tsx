@@ -247,7 +247,7 @@ export default function DashboardEscrowDetailsPage() {
 
       <div className="grid gap-4 xl:grid-cols-[1.25fr_0.75fr]">
         <section className="space-y-4">
-          <article className="rounded-3xl border border-slate-200 bg-[var(--brand)]/20 p-5 dark:border-slate-700 dark:bg-slate-900">
+          <article className="rounded-3xl border border-slate-200 bg-(--brand)/20 p-5 dark:border-slate-700 dark:bg-slate-900">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Escrow balance</p>

@@ -69,7 +69,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
         <ToastStack toasts={toasts} onRemove={removeToast} />
 
-        <div className="mx-auto w-full max-w-[1500px]">
+        <div className="mx-auto w-full max-w-375">
           <DashboardSidebar
             isCollapsed={isSidebarCollapsed}
             onToggleCollapse={() => setIsSidebarCollapsed((current) => !current)}
@@ -93,7 +93,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <section
             className={cn(
               "mt-4 flex-1 rounded-[30px] border border-white/70 bg-white/80 p-4 shadow-[0_20px_60px_rgba(13,28,70,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70 md:p-6 lg:mt-0 lg:min-h-[calc(100vh-3rem)] lg:transition-[margin-left] lg:duration-300 lg:ease-out lg:p-8",
-              isSidebarCollapsed ? "lg:ml-[112px]" : "lg:ml-[280px]",
+              isSidebarCollapsed ? "lg:ml-28" : "lg:ml-70",
             )}
           >
             {children}

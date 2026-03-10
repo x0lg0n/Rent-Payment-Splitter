@@ -516,7 +516,7 @@ export default function TransferPage() {
                           onError={() => setFailedQrUrl(receiveQrUrl)}
                         />
                       ) : (
-                        <div className="grid h-[248px] w-[248px] place-items-center rounded-lg border border-dashed border-slate-300 text-center text-xs text-slate-500 dark:border-slate-600 dark:text-slate-300">
+                        <div className="grid h-62 w-62 place-items-center rounded-lg border border-dashed border-slate-300 text-center text-xs text-slate-500 dark:border-slate-600 dark:text-slate-300">
                           QR preview unavailable.
                         </div>
                       )}

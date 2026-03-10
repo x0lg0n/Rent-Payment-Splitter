@@ -48,7 +48,7 @@ export default function HomePage() {
         <div className="absolute -bottom-32 left-1/3 h-80 w-80 rounded-full bg-blue-200/50 blur-3xl dark:bg-blue-500/10" />
       </div>
 
-      <div className="mx-auto w-full max-w-[1500px]">
+      <div className="mx-auto w-full max-w-375">
         <div className="overflow-hidden rounded-[30px] border border-white/70 bg-white/80 shadow-[0_20px_60px_rgba(13,28,70,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70">
           <LandingHeader onConnectClick={openWalletSelector} />
           <div className="space-y-6 p-4 md:space-y-8 md:p-8">

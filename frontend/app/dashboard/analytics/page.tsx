@@ -988,7 +988,7 @@ export default function AnalyticsPage() {
                     background: `conic-gradient(#0f172a 0% ${directShare}%, #64748b ${directShare}% 100%)`,
                   }}
                 >
-                  <div className="absolute inset-[10px] grid place-items-center rounded-full bg-white text-[11px] font-semibold text-slate-700 dark:bg-slate-900 dark:text-slate-200">
+                  <div className="absolute inset-2.5 grid place-items-center rounded-full bg-white text-[11px] font-semibold text-slate-700 dark:bg-slate-900 dark:text-slate-200">
                     {typeTotal > 0 ? `${directShare.toFixed(0)}%` : "0%"}
                   </div>
                 </div>

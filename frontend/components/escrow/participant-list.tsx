@@ -36,12 +36,12 @@ export function ParticipantList({
             <div
               key={index}
               className={`flex items-center justify-between rounded-lg border p-3 ${
-                isCurrentUser ? "border-[var(--brand)] bg-[var(--brand)]/5" : ""
+                isCurrentUser ? "border-(--brand) bg-(--brand)/5" : ""
               }`}
             >
               <div className="flex items-center gap-3">
                 <div className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                  isCurrentUser ? "bg-[var(--brand)]/20" : "bg-muted"
+                  isCurrentUser ? "bg-(--brand)/20" : "bg-muted"
                 }`}>
                   <User className="h-4 w-4" />
                 </div>
