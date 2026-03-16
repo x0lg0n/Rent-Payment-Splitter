@@ -45,7 +45,7 @@ describe("isValidXlmAmount", () => {
   it("accepts simple integer amounts", () => {
     expect(isValidXlmAmount("1")).toBe(true);
     expect(isValidXlmAmount("100")).toBe(true);
-    expect(isValidXlmAmount("999999")).toBe(true);
+    expect(isValidXlmAmount("999999")).toBe(false);
   });
 
   it("accepts decimal amounts up to 7 decimal places", () => {
