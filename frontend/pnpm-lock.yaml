@@ -23,6 +23,9 @@ importers:
       '@stellar/stellar-sdk':
         specifier: ^14.6.1
         version: 14.6.1
+      bignumber.js:
+        specifier: ^10.0.2
+        version: 10.0.2
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -53,6 +56,9 @@ importers:
       soroban-client:
         specifier: ^1.0.1
         version: 1.0.1
+      stellar-sdk:
+        specifier: ^13.3.0
+        version: 13.3.0
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
@@ -3584,6 +3590,9 @@ packages:
   big.js@6.2.2:
     resolution: {integrity: sha512-y/ie+Faknx7sZA5MfGA2xKlu0GDv8RWrXGsmlteyJQ2lvoKv9GBK/fpRMc2qlSoBAgNxrixICFCBefIq8WCQpQ==}
 
+  bignumber.js@10.0.2:
+    resolution: {integrity: sha512-E8Wp9O06QA6lneJ4aRUXKYf/1GIomqUEmUMwtIOMtDxf1U52ffJY+y7JBk/8wRafA8qOIqLnXQGqonYXZdBnFQ==}
+
   bignumber.js@9.3.1:
     resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
 
@@ -6115,6 +6124,11 @@ packages:
   stellar-base@10.0.0:
     resolution: {integrity: sha512-WQhxGXQLSwwmIxWbZqv0HcJtlSOiaUgv7yKCCEwP+OoYDHKBjPjQiZWyAkuEY+mRFX9L+hnejLaBorc3P2rk0g==}
     deprecated: ⚠️ This package has moved to @stellar/stellar-base! 🚚
+
+  stellar-sdk@13.3.0:
+    resolution: {integrity: sha512-jAA3+U7oAUueldoS4kuEhcym+DigElWq9isPxt7tjMrE7kTJ2vvY29waavUb2FSfQIWwGbuwAJTYddy2BeyJsw==}
+    engines: {node: '>=18.0.0'}
+    deprecated: ⚠️ This package has moved to @stellar/stellar-sdk! 🚚
 
   stop-iteration-iterator@1.1.0:
     resolution: {integrity: sha512-eLoXW/DHyl62zxY4SCaIgnRhuMr6ri4juEYARS8E6sCEqzKpOiE521Ucofdx+KnDZl5xmvGYaaKCk5FEOxJCoQ==}
@@ -11513,6 +11527,8 @@ snapshots:
 
   big.js@6.2.2: {}
 
+  bignumber.js@10.0.2: {}
+
   bignumber.js@9.3.1: {}
 
   bindings@1.5.0:
@@ -14512,6 +14528,20 @@ snapshots:
       sodium-native: 4.3.3
     transitivePeerDependencies:
       - bare-url
+
+  stellar-sdk@13.3.0:
+    dependencies:
+      '@stellar/stellar-base': 13.1.0
+      axios: 1.13.5
+      bignumber.js: 9.3.1
+      eventsource: 2.0.2
+      feaxios: 0.0.23
+      randombytes: 2.1.0
+      toml: 3.0.0
+      urijs: 1.19.11
+    transitivePeerDependencies:
+      - bare-url
+      - debug
 
   stop-iteration-iterator@1.1.0:
     dependencies:
