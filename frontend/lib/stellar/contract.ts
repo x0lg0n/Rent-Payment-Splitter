@@ -623,3 +623,5 @@ export const escrowService = CONTRACT_ID ? new EscrowService() : null;
 export function initializeEscrowService(contractId?: string) {
   return new EscrowService(contractId);
 }
+
+export { EscrowData, EscrowStatus };
