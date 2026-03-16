@@ -138,7 +138,7 @@ export function DashboardSidebar({
           size="icon"
           className={cn(
             "hidden rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white lg:inline-flex",
-            isCollapsed && "lg:absolute lg:right-0"
+            isCollapsed && "lg:absolute lg:right-5"
           )}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           onClick={onToggleCollapse}>
