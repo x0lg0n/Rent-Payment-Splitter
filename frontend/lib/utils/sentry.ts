@@ -177,7 +177,7 @@ export function startTransaction(name: string, op?: string): Sentry.Span | undef
     return undefined;
   }
 
-  return Sentry.startSpan({ name, op: op || "default" });
+  return Sentry.startInactiveSpan({ name, op: op || "default" });
 }
 
 /**

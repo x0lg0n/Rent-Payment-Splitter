@@ -50,10 +50,6 @@ export function initPostHog(config?: PostHogConfig): PostHog | null {
       session_recording: {
         recordCrossOriginIframes: false,
         maskAllInputs: true,
-        maskInputOptions: {
-          password: true,
-          creditCard: true,
-        },
       },
       
       // Privacy settings
@@ -70,7 +66,6 @@ export function initPostHog(config?: PostHogConfig): PostHog | null {
       
       // Session ID rotation
       session_idle_timeout_seconds: 30 * 60, // 30 minutes
-      session_max_length_seconds: 24 * 60 * 60, // 24 hours
     });
 
     posthogInstance = posthog;
@@ -103,7 +98,6 @@ export function identifyUser(
   const safeProperties = { ...properties };
   if (properties?.walletAddress) {
     safeProperties.walletAddress = `***${properties.walletAddress.slice(-4)}`;
-    safeProperties.walletAddressFull = undefined; // Never send full address
   }
 
   posthog.identify(distinctId, safeProperties);
@@ -207,7 +201,7 @@ export function isPostHogEnabled(): boolean {
   return isInitialized && !!posthogInstance && !!process.env.NEXT_PUBLIC_POSTHOG_KEY;
 }
 
-export default {
+const posthogUtils = {
   initPostHog,
   identifyUser,
   resetUser,
@@ -220,3 +214,5 @@ export default {
   hasOptedIn,
   isPostHogEnabled,
 };
+
+export default posthogUtils;
