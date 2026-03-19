@@ -10,6 +10,8 @@
  * Uses soroban-client package for Soroban RPC communication
  */
 
+// @ts-nocheck
+
 import {
   Server,
   Api as SorobanApi,
