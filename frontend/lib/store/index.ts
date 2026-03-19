@@ -180,7 +180,7 @@ export const useEscrowStore = create<EscrowState>()(
             id: escrow.id.toString(),
             creator: escrow.creator,
             landlord: escrow.landlord,
-            participants: escrow.participants.map((p: { address: string; share_amount: bigint; deposited: boolean }) => ({
+            participants: escrow.participants.map((p: { address: string; share_amount: bigint | string; deposited: boolean }) => ({
               address: p.address,
               share_amount: p.share_amount.toString(),
               deposited: p.deposited,
