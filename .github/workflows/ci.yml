@@ -56,11 +56,11 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 9
-          
+
       - name: Install dependencies
         working-directory: ./frontend
         run: pnpm install --frozen-lockfile
-        
+
       - name: Run tests
         working-directory: ./frontend
         run: pnpm test
@@ -82,11 +82,11 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 9
-          
+
       - name: Install dependencies
         working-directory: ./frontend
         run: pnpm install --frozen-lockfile
-        
+
       - name: Build
         working-directory: ./frontend
         run: pnpm build
@@ -111,7 +111,8 @@ jobs:
 
       - name: Install Soroban CLI
         run: |
-          curl -L https://github.com/stellar/stellar-cli/releases/latest/download/stellar-cli-x86_64-unknown-linux-gnu.tar.gz | tar xz -C /usr/local/bin stellar stellar-cli
+          curl -fsSL https://soroban.stellar.org/install.sh | bash
+          echo "$HOME/.stellar/bin" >> $GITHUB_PATH
 
       - name: Build and test contracts
         working-directory: ./SplitRent
