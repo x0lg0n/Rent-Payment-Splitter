@@ -9,10 +9,25 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".next*/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "playwright-report/**",
+    "test-results/**",
   ]),
+  // Stellar SDK responses are runtime-driven and require flexible typing.
+  {
+    files: [
+      "lib/contract-abi.ts",
+      "lib/hooks/use-escrow.ts",
+      "lib/stellar/**/*.ts",
+    ],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;
