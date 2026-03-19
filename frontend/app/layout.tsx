@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Space_Grotesk } from "next/font/google";
 import { ErrorBoundary } from "@/components/shared/error-boundary";
 import "./globals.css";
 import { initSentry } from "@/lib/utils/sentry";
@@ -10,16 +9,6 @@ if (typeof window !== "undefined") {
   initSentry();
   initPostHog();
 }
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "SplitRent",
@@ -33,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={spaceGrotesk.variable} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -50,9 +39,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body
-        className={`${geistMono.variable} antialiased`}
-      >
+      <body className="antialiased">
         <ErrorBoundary>
           {children}
         </ErrorBoundary>
