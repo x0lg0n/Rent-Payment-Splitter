@@ -8,10 +8,10 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { escrowService, EscrowService } from "@/lib/stellar/contract";
+import { escrowService } from "@/lib/stellar/contract";
 import { useWallet } from "./use-wallet";
 import { useToasts } from "./use-toasts";
-import { EscrowData, InitializeParams } from "@/lib/contract-abi";
+import type { EscrowData, InitializeParams } from "@/lib/contract-abi";
 
 interface UseEscrowReturn {
   // State
@@ -45,8 +45,8 @@ interface CreateEscrowParams extends InitializeParams {
 }
 
 export function useEscrow(): UseEscrowReturn {
-  const { walletAddress } = useWallet();
   const { pushToast } = useToasts();
+  const { walletAddress } = useWallet({ pushToast });
 
   const [currentEscrow, setCurrentEscrow] = useState<EscrowData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
