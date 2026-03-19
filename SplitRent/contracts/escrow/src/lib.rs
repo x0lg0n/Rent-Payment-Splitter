@@ -1,7 +1,7 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, contracttype, contractevent, Address, Env, Vec, Symbol, symbol_short,
-    Map,
+    contract, contractevent, contractimpl, contracttype, symbol_short, Address, Env, Map, Symbol,
+    Vec,
 };
 
 #[cfg(not(test))]
@@ -149,18 +149,18 @@ impl RentEscrowContract {
     /// Create vault address for an escrow
     fn create_vault(env: &Env, escrow_id: u64, token: Address) -> Address {
         let key = (VAULT_PREFIX, escrow_id);
-        
+
         // For simplicity, use the contract address as the vault
         // In production with native XLM, you would create a separate account
         // For tokens, the contract itself can hold tokens
         let vault_address = env.current_contract_address();
-        
+
         let vault = EscrowVault {
             escrow_id,
             token: token.clone(),
             vault_address: vault_address.clone(),
         };
-        
+
         env.storage().persistent().set(&key, &vault);
         vault_address
     }
@@ -173,9 +173,7 @@ impl RentEscrowContract {
             .get(&ESCROWS)
             .unwrap_or(Map::new(env));
 
-        escrows
-            .get(escrow_id)
-            .expect("Escrow not found")
+        escrows.get(escrow_id).expect("Escrow not found")
     }
 
     /// Save escrow to the escrows map
@@ -192,11 +190,7 @@ impl RentEscrowContract {
 
     /// Get next escrow ID (auto-increment)
     fn get_next_escrow_id(env: &Env) -> u64 {
-        let id: u64 = env
-            .storage()
-            .persistent()
-            .get(&ESCROW_COUNTER)
-            .unwrap_or(0);
+        let id: u64 = env.storage().persistent().get(&ESCROW_COUNTER).unwrap_or(0);
         env.storage().persistent().set(&ESCROW_COUNTER, &(id + 1));
         id
     }
@@ -213,7 +207,9 @@ impl RentEscrowContract {
 
     /// Set reentrancy guard
     fn set_transfer_guard(env: &Env, active: bool) {
-        env.storage().temporary().set(&TRANSFER_IN_PROGRESS, &active);
+        env.storage()
+            .temporary()
+            .set(&TRANSFER_IN_PROGRESS, &active);
     }
 
     /// Initialize a new escrow for rent splitting
@@ -230,8 +226,14 @@ impl RentEscrowContract {
 
         // Validate inputs
         assert!(participants.len() > 0, "Must have at least one participant");
-        assert!(participants.len() == shares.len(), "Participants and shares length mismatch");
-        assert!(deadline > env.ledger().timestamp(), "Deadline must be in the future");
+        assert!(
+            participants.len() == shares.len(),
+            "Participants and shares length mismatch"
+        );
+        assert!(
+            deadline > env.ledger().timestamp(),
+            "Deadline must be in the future"
+        );
 
         // Generate unique escrow ID
         let escrow_id = Self::get_next_escrow_id(&env);
@@ -253,7 +255,10 @@ impl RentEscrowContract {
         }
 
         assert!(total_rent > 0, "Total rent must be greater than 0");
-        assert!(total_rent <= i128::MAX / 2, "Total rent overflow protection");
+        assert!(
+            total_rent <= i128::MAX / 2,
+            "Total rent overflow protection"
+        );
 
         // Create vault for fund custody
         let _vault_address = Self::create_vault(&env, escrow_id, token.clone());
@@ -282,7 +287,8 @@ impl RentEscrowContract {
             landlord,
             token,
             total_rent,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         escrow_id
     }
@@ -294,15 +300,24 @@ impl RentEscrowContract {
 
         let mut escrow = Self::get_escrow(&env, escrow_id);
 
-        assert!(escrow.status == EscrowStatus::Active, "Escrow is not active");
-        assert!(env.ledger().timestamp() < escrow.deadline, "Escrow deadline passed");
+        assert!(
+            escrow.status == EscrowStatus::Active,
+            "Escrow is not active"
+        );
+        assert!(
+            env.ledger().timestamp() < escrow.deadline,
+            "Escrow deadline passed"
+        );
 
         // Find participant and check if already deposited
         let mut found = false;
         for i in 0..escrow.participants.len() {
             let mut p = escrow.participants.get(i).unwrap();
             if p.address == participant {
-                assert!(p.status == ParticipantStatus::Pending, "Participant already deposited");
+                assert!(
+                    p.status == ParticipantStatus::Pending,
+                    "Participant already deposited"
+                );
 
                 // Transfer tokens from participant to escrow vault
                 // In test mode, skip actual token transfer
@@ -319,7 +334,10 @@ impl RentEscrowContract {
                 escrow.deposited_amount += p.share_amount;
 
                 // Overflow protection
-                assert!(escrow.deposited_amount <= escrow.total_rent, "Deposit overflow");
+                assert!(
+                    escrow.deposited_amount <= escrow.total_rent,
+                    "Deposit overflow"
+                );
 
                 found = true;
 
@@ -328,7 +346,8 @@ impl RentEscrowContract {
                     escrow_id,
                     participant: participant.clone(),
                     amount: p.share_amount,
-                }.publish(&env);
+                }
+                .publish(&env);
 
                 break;
             }
@@ -345,7 +364,8 @@ impl RentEscrowContract {
                     escrow_id,
                     old_status,
                     new_status: escrow.status.clone(),
-                }.publish(&env);
+                }
+                .publish(&env);
             }
         }
 
@@ -362,12 +382,16 @@ impl RentEscrowContract {
         let mut escrow = Self::get_escrow(&env, escrow_id);
 
         assert!(
-            escrow.status == EscrowStatus::FullyFunded ||
-            (escrow.status == EscrowStatus::Active && escrow.deposited_amount >= escrow.total_rent),
+            escrow.status == EscrowStatus::FullyFunded
+                || (escrow.status == EscrowStatus::Active
+                    && escrow.deposited_amount >= escrow.total_rent),
             "Escrow not fully funded"
         );
 
-        assert!(escrow.status != EscrowStatus::Released, "Escrow already released");
+        assert!(
+            escrow.status != EscrowStatus::Released,
+            "Escrow already released"
+        );
 
         // Landlord must authorize to receive funds
         escrow.landlord.require_auth();
@@ -398,14 +422,16 @@ impl RentEscrowContract {
             escrow_id,
             landlord: escrow.landlord.clone(),
             amount: escrow.deposited_amount,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         // Emit status change event
         StatusChanged {
             escrow_id,
             old_status,
             new_status: EscrowStatus::Released,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         true
     }
@@ -418,8 +444,7 @@ impl RentEscrowContract {
         let mut escrow = Self::get_escrow(&env, escrow_id);
 
         assert!(
-            escrow.status == EscrowStatus::Active ||
-            escrow.status == EscrowStatus::Refunding,
+            escrow.status == EscrowStatus::Active || escrow.status == EscrowStatus::Refunding,
             "Escrow is not in refundable state"
         );
         assert!(
@@ -436,7 +461,10 @@ impl RentEscrowContract {
         for i in 0..escrow.participants.len() {
             let mut p = escrow.participants.get(i).unwrap();
             if p.address == participant {
-                assert!(p.status == ParticipantStatus::Deposited, "Participant has not deposited");
+                assert!(
+                    p.status == ParticipantStatus::Deposited,
+                    "Participant has not deposited"
+                );
 
                 // Set reentrancy guard
                 Self::set_transfer_guard(&env, true);
@@ -448,7 +476,10 @@ impl RentEscrowContract {
                     let token_client = TokenClient::new(&env, &escrow.token);
 
                     // Check for underflow before subtraction
-                    assert!(escrow.deposited_amount >= p.share_amount, "Refund amount exceeds deposited");
+                    assert!(
+                        escrow.deposited_amount >= p.share_amount,
+                        "Refund amount exceeds deposited"
+                    );
 
                     token_client.transfer(&vault_address, &participant, &p.share_amount);
                 }
@@ -459,7 +490,7 @@ impl RentEscrowContract {
                 // Mark as refunded
                 p.status = ParticipantStatus::Refunded;
                 escrow.participants.set(i, p.clone());
-                
+
                 // Safe subtraction with underflow check
                 escrow.deposited_amount -= p.share_amount;
 
@@ -470,7 +501,8 @@ impl RentEscrowContract {
                     escrow_id,
                     participant: participant.clone(),
                     amount: p.share_amount,
-                }.publish(&env);
+                }
+                .publish(&env);
 
                 break;
             }
@@ -485,13 +517,14 @@ impl RentEscrowContract {
         } else {
             escrow.status = EscrowStatus::Refunding;
         }
-        
+
         if old_status != escrow.status {
             StatusChanged {
                 escrow_id,
                 old_status,
                 new_status: escrow.status.clone(),
-            }.publish(&env);
+            }
+            .publish(&env);
         }
 
         // Update escrow
@@ -507,8 +540,10 @@ impl RentEscrowContract {
         // Creator must authorize to raise dispute
         escrow.creator.require_auth();
 
-        assert!(escrow.status == EscrowStatus::Active || escrow.status == EscrowStatus::FullyFunded,
-                "Can only dispute Active or FullyFunded escrows");
+        assert!(
+            escrow.status == EscrowStatus::Active || escrow.status == EscrowStatus::FullyFunded,
+            "Can only dispute Active or FullyFunded escrows"
+        );
 
         let old_status = escrow.status.clone();
         escrow.status = EscrowStatus::Disputed;
@@ -519,13 +554,15 @@ impl RentEscrowContract {
             escrow_id,
             raised_by: escrow.creator.clone(),
             reason,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         StatusChanged {
             escrow_id,
             old_status,
             new_status: EscrowStatus::Disputed,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         true
     }
@@ -533,12 +570,15 @@ impl RentEscrowContract {
     /// Resolve a dispute (admin/arbiter only)
     pub fn resolve_dispute(env: Env, escrow_id: u64, outcome: Symbol, arbiter: Address) -> bool {
         arbiter.require_auth();
-        
+
         let mut escrow = Self::get_escrow(&env, escrow_id);
-        assert!(escrow.status == EscrowStatus::Disputed, "Escrow is not disputed");
+        assert!(
+            escrow.status == EscrowStatus::Disputed,
+            "Escrow is not disputed"
+        );
 
         let old_status = escrow.status.clone();
-        
+
         // Outcome can be: "release", "refund", "cancel"
         if outcome == symbol_short!("release") {
             escrow.status = EscrowStatus::FullyFunded;
@@ -549,7 +589,7 @@ impl RentEscrowContract {
         } else {
             panic!("Invalid outcome");
         }
-        
+
         Self::save_escrow(&env, escrow.clone());
 
         // Emit events
@@ -557,13 +597,15 @@ impl RentEscrowContract {
             escrow_id,
             resolved_by: arbiter,
             outcome,
-        }.publish(&env);
+        }
+        .publish(&env);
 
         StatusChanged {
             escrow_id,
             old_status,
             new_status: escrow.status.clone(),
-        }.publish(&env);
+        }
+        .publish(&env);
 
         true
     }
@@ -606,9 +648,9 @@ impl RentEscrowContract {
     pub fn can_refund(env: Env, escrow_id: u64) -> bool {
         let escrow = Self::get_escrow(&env, escrow_id);
 
-        (escrow.status == EscrowStatus::Active || escrow.status == EscrowStatus::Refunding) &&
-        env.ledger().timestamp() > escrow.deadline &&
-        escrow.deposited_amount < escrow.total_rent
+        (escrow.status == EscrowStatus::Active || escrow.status == EscrowStatus::Refunding)
+            && env.ledger().timestamp() > escrow.deadline
+            && escrow.deposited_amount < escrow.total_rent
     }
 
     /// Get all escrow IDs with pagination
@@ -622,17 +664,21 @@ impl RentEscrowContract {
         let mut ids: Vec<u64> = Vec::new(&env);
         let keys: Vec<u64> = escrows.keys();
         let total_keys = keys.len();
-        
+
         // Calculate start index with overflow protection
-        let start = if offset < total_keys as u64 { offset } else { total_keys as u64 };
+        let start = if offset < total_keys as u64 {
+            offset
+        } else {
+            total_keys as u64
+        };
         let end = core::cmp::min(start + limit, total_keys as u64);
-        
+
         for i in start..end {
             if let Some(key) = keys.get(i as u32) {
                 ids.push_back(key);
             }
         }
-        
+
         ids
     }
 
@@ -654,14 +700,18 @@ impl RentEscrowContract {
     /// Extend TTL for escrow storage
     pub fn extend_ttl(env: Env, escrow_id: u64, extension: u32) -> bool {
         let _escrow = Self::get_escrow(&env, escrow_id);
-        
+
         // Extend TTL for escrow data
-        env.storage().persistent().extend_ttl(&ESCROWS, extension, extension);
-        
+        env.storage()
+            .persistent()
+            .extend_ttl(&ESCROWS, extension, extension);
+
         // Extend TTL for vault
         let vault_key = (VAULT_PREFIX, escrow_id);
-        env.storage().persistent().extend_ttl(&vault_key, extension, extension);
-        
+        env.storage()
+            .persistent()
+            .extend_ttl(&vault_key, extension, extension);
+
         true
     }
 
