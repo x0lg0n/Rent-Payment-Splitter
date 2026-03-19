@@ -111,8 +111,12 @@ jobs:
 
       - name: Install Soroban CLI
         run: |
-          curl -fsSL https://soroban.stellar.org/install.sh | bash
-          echo "$HOME/.stellar/bin" >> $GITHUB_PATH
+          curl -L https://github.com/stellar/stellar-cli/releases/download/v25.2.0/stellar-cli-25.2.0-x86_64-unknown-linux-gnu.tar.gz -o stellar-cli.tar.gz
+          tar -xzf stellar-cli.tar.gz
+          chmod +x stellar
+          mv stellar /usr/local/bin/
+          rm stellar-cli.tar.gz
+          stellar --version
 
       - name: Build and test contracts
         working-directory: ./SplitRent
