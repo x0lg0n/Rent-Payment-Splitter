@@ -32,7 +32,7 @@ interface UseEscrowReturn {
   dispute: (escrowId: bigint, reason: string) => Promise<string>;
   resolveDispute: (
     escrowId: bigint,
-    outcome: "release" | "refund" | "cancel"
+    outcome: "release" | "refund" | "cancel",
   ) => Promise<string>;
   refreshEscrow: (escrowId: bigint) => Promise<void>;
   canRefund: (escrowId: bigint) => Promise<boolean>;
@@ -72,7 +72,7 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "Creating Escrow",
           "Please sign the transaction in your wallet...",
-          "default" as any
+          "default" as any,
         );
 
         const result = await escrowService.createEscrow({
@@ -84,7 +84,7 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "✅ Escrow Created",
           `Escrow ID: ${result.escrowId.toString()}`,
-          "success" as any
+          "success" as any,
         );
 
         // Fetch and store escrow details
@@ -97,14 +97,14 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "Failed to Create Escrow",
           error instanceof Error ? error.message : "Unknown error",
-          "error"
+          "error",
         );
         throw error;
       } finally {
         setIsCreating(false);
       }
     },
-    [walletAddress, pushToast]
+    [walletAddress, pushToast],
   );
 
   const deposit = useCallback(
@@ -122,7 +122,7 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "💰 Depositing Funds",
           "Please sign the token transfer...",
-          "default" as any
+          "default" as any,
         );
 
         const result = await escrowService.deposit(escrowId, walletAddress);
@@ -130,7 +130,7 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "✅ Deposit Successful",
           `Transaction: ${result.hash.slice(0, 8)}...`,
-          "success" as any
+          "success" as any,
         );
 
         // Refresh escrow state
@@ -142,14 +142,15 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "❌ Deposit Failed",
           error instanceof Error ? error.message : "Unknown error",
-          "error"
+          "error",
         );
         throw error;
       } finally {
         setIsDepositing(false);
       }
     },
-    [walletAddress, pushToast]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [walletAddress, pushToast],
   );
 
   const release = useCallback(
@@ -167,16 +168,17 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "🎉 Releasing Funds",
           "Landlord must sign to receive funds...",
-          "default" as any
+          "default" as any,
         );
 
-        const escrow = currentEscrow || (await escrowService.getEscrowById(escrowId));
+        const escrow =
+          currentEscrow || (await escrowService.getEscrowById(escrowId));
         const result = await escrowService.release(escrowId, escrow.landlord);
 
         pushToast(
           "✅ Funds Released",
           `Transaction: ${result.hash.slice(0, 8)}...`,
-          "success" as any
+          "success" as any,
         );
 
         await refreshEscrow(escrowId);
@@ -187,14 +189,15 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "❌ Release Failed",
           error instanceof Error ? error.message : "Unknown error",
-          "error"
+          "error",
         );
         throw error;
       } finally {
         setIsReleasing(false);
       }
     },
-    [walletAddress, pushToast, currentEscrow]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [walletAddress, pushToast, currentEscrow],
   );
 
   const refund = useCallback(
@@ -212,7 +215,7 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "💸 Processing Refund",
           "Please sign the refund transaction...",
-          "default" as any
+          "default" as any,
         );
 
         const result = await escrowService.refund(escrowId, walletAddress);
@@ -220,7 +223,7 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "✅ Refund Processed",
           `Transaction: ${result.hash.slice(0, 8)}...`,
-          "success" as any
+          "success" as any,
         );
 
         await refreshEscrow(escrowId);
@@ -231,14 +234,15 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "❌ Refund Failed",
           error instanceof Error ? error.message : "Unknown error",
-          "error"
+          "error",
         );
         throw error;
       } finally {
         setIsRefunding(false);
       }
     },
-    [walletAddress, pushToast]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [walletAddress, pushToast],
   );
 
   const dispute = useCallback(
@@ -256,15 +260,19 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "⚠️ Raising Dispute",
           "Please sign to raise dispute...",
-          "default" as any
+          "default" as any,
         );
 
-        const result = await escrowService.dispute(escrowId, walletAddress, reason);
+        const result = await escrowService.dispute(
+          escrowId,
+          walletAddress,
+          reason,
+        );
 
         pushToast(
           "✅ Dispute Raised",
           `Transaction: ${result.hash.slice(0, 8)}...`,
-          "success" as any
+          "success" as any,
         );
 
         await refreshEscrow(escrowId);
@@ -275,20 +283,21 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "❌ Dispute Failed",
           error instanceof Error ? error.message : "Unknown error",
-          "error"
+          "error",
         );
         throw error;
       } finally {
         setIsDisputing(false);
       }
     },
-    [walletAddress, pushToast]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [walletAddress, pushToast],
   );
 
   const resolveDispute = useCallback(
     async (
       escrowId: bigint,
-      outcome: "release" | "refund" | "cancel"
+      outcome: "release" | "refund" | "cancel",
     ): Promise<string> => {
       if (!walletAddress) {
         throw new Error("Wallet not connected");
@@ -303,19 +312,19 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "✅ Resolving Dispute",
           "Please sign to resolve dispute...",
-          "default" as any
+          "default" as any,
         );
 
         const result = await escrowService.resolveDispute(
           escrowId,
           walletAddress,
-          outcome
+          outcome,
         );
 
         pushToast(
           "✅ Dispute Resolved",
           `Outcome: ${outcome}`,
-          "success" as any
+          "success" as any,
         );
 
         await refreshEscrow(escrowId);
@@ -326,40 +335,35 @@ export function useEscrow(): UseEscrowReturn {
         pushToast(
           "❌ Resolution Failed",
           error instanceof Error ? error.message : "Unknown error",
-          "error"
+          "error",
         );
         throw error;
       } finally {
         setIsResolvingDispute(false);
       }
     },
-    [walletAddress, pushToast]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [walletAddress, pushToast],
   );
 
-  const refreshEscrow = useCallback(
-    async (escrowId: bigint) => {
-      if (!escrowService) return;
+  const refreshEscrow = useCallback(async (escrowId: bigint) => {
+    if (!escrowService) return;
 
-      setIsLoading(true);
-      try {
-        const escrow = await escrowService.getEscrowById(escrowId);
-        setCurrentEscrow(escrow);
-      } catch (error) {
-        console.error("Failed to refresh escrow:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
+    setIsLoading(true);
+    try {
+      const escrow = await escrowService.getEscrowById(escrowId);
+      setCurrentEscrow(escrow);
+    } catch (error) {
+      console.error("Failed to refresh escrow:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  const canRefund = useCallback(
-    async (escrowId: bigint): Promise<boolean> => {
-      if (!escrowService) return false;
-      return await escrowService.canRefund(escrowId);
-    },
-    []
-  );
+  const canRefund = useCallback(async (escrowId: bigint): Promise<boolean> => {
+    if (!escrowService) return false;
+    return await escrowService.canRefund(escrowId);
+  }, []);
 
   const getEscrowById = useCallback(
     async (escrowId: bigint): Promise<EscrowData> => {
@@ -368,7 +372,7 @@ export function useEscrow(): UseEscrowReturn {
       }
       return await escrowService.getEscrowById(escrowId);
     },
-    []
+    [],
   );
 
   return {

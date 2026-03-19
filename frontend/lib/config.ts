@@ -6,7 +6,7 @@
  */
 
 // Validate environment on module load
-import { validateEnv, getConfig } from "@/lib/config-schema";
+import { validateEnv } from "@/lib/config-schema";
 
 // Run validation immediately
 const envResult = validateEnv();

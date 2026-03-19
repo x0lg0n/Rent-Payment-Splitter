@@ -1,6 +1,12 @@
 "use client";
 
-import { type FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   isValidStellarAddress,
   isValidXlmAmount,
@@ -40,7 +46,9 @@ export function usePayment({
   const [recipientAddress, setRecipientAddress] = useState("");
   const [paymentAmount, setPaymentAmount] = useState("");
   const [isSendingPayment, setIsSendingPayment] = useState(false);
-  const [paymentSuccessHash, setPaymentSuccessHash] = useState<string | null>(null);
+  const [paymentSuccessHash, setPaymentSuccessHash] = useState<string | null>(
+    null,
+  );
   const [isCheckingRecipient, setIsCheckingRecipient] = useState(false);
   const [recipientExists, setRecipientExists] = useState<boolean | null>(null);
 
@@ -78,7 +86,10 @@ export function usePayment({
       event.preventDefault();
 
       if (!walletAddress) {
-        pushToast("Wallet required", "Connect Freighter before sending payment.");
+        pushToast(
+          "Wallet required",
+          "Connect Freighter before sending payment.",
+        );
         return;
       }
       if (!walletOnTestnet) {
@@ -117,9 +128,15 @@ export function usePayment({
       }
 
       // Validate amount against balance with fees
-      const balanceValidation = validateAmountAgainstBalance(cleanAmount, walletBalance);
+      const balanceValidation = validateAmountAgainstBalance(
+        cleanAmount,
+        walletBalance,
+      );
       if (!balanceValidation.valid) {
-        pushToast("Insufficient balance", balanceValidation.error || "Insufficient balance.");
+        pushToast(
+          "Insufficient balance",
+          balanceValidation.error || "Insufficient balance.",
+        );
         return;
       }
 
@@ -130,7 +147,7 @@ export function usePayment({
         pushToast(
           "Please wait",
           "Please wait a moment before sending another payment.",
-          "error"
+          "error",
         );
         return;
       }
@@ -163,21 +180,21 @@ export function usePayment({
           pushToast(
             "Payment successful",
             `Transaction confirmed on ledger ${result.ledger}`,
-            "success"
+            "success",
           );
           await refreshBalance(walletAddress, walletNetwork);
         } else {
           pushToast(
             "Payment submitted",
             "Transaction submitted but not yet confirmed. Check the explorer for status.",
-            "success"
+            "success",
           );
         }
       } catch (error) {
         const message =
-          error instanceof Error
-            ? error.message
-            : "Payment failed due to an unknown error.";
+          error instanceof Error ?
+            error.message
+          : "Payment failed due to an unknown error.";
         pushToast("Transaction failed", message, "error");
       } finally {
         setIsSendingPayment(false);
@@ -189,6 +206,7 @@ export function usePayment({
       recipientAddress,
       paymentAmount,
       walletBalance,
+      walletNetwork,
       pushToast,
       refreshBalance,
       addTransaction,
@@ -207,21 +225,21 @@ export function usePayment({
   // Calculate total sent from transactions
   const totalSent = useMemo(() => {
     return transactions
-      .filter(tx => tx.from.toLowerCase() === walletAddress?.toLowerCase())
+      .filter((tx) => tx.from.toLowerCase() === walletAddress?.toLowerCase())
       .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
   }, [transactions, walletAddress]);
 
   // Calculate total received from transactions
   const totalReceived = useMemo(() => {
     return transactions
-      .filter(tx => tx.to.toLowerCase() === walletAddress?.toLowerCase())
+      .filter((tx) => tx.to.toLowerCase() === walletAddress?.toLowerCase())
       .reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
   }, [transactions, walletAddress]);
 
   // Calculate success rate (confirmed vs total)
   const successRate = useMemo(() => {
     if (transactions.length === 0) return 100;
-    const confirmed = transactions.filter(tx => tx.confirmed).length;
+    const confirmed = transactions.filter((tx) => tx.confirmed).length;
     return (confirmed / transactions.length) * 100;
   }, [transactions]);
 

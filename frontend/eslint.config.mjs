@@ -28,6 +28,19 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/ban-ts-comment": "off",
     },
   },
+  // Allow unused variables/params starting with underscore (intentional)
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;

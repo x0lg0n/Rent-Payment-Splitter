@@ -1,6 +1,6 @@
 /**
  * Sentry error tracking integration for SplitRent
- * 
+ *
  * To enable:
  * 1. Install: pnpm add @sentry/nextjs
  * 2. Create .env.local with NEXT_PUBLIC_SENTRY_DSN
@@ -28,7 +28,7 @@ export function initSentry(config?: SentryConfig): void {
   }
 
   const dsn = config?.dsn || process.env.NEXT_PUBLIC_SENTRY_DSN;
-  
+
   if (!dsn) {
     console.warn("Sentry DSN not provided. Error tracking disabled.");
     return;
@@ -37,16 +37,16 @@ export function initSentry(config?: SentryConfig): void {
   Sentry.init({
     dsn,
     environment: config?.environment || process.env.NODE_ENV,
-    
+
     // Error sample rate (1.0 = 100%)
     sampleRate: config?.sampleRate ?? 1.0,
-    
+
     // Performance monitoring sample rate
     tracesSampleRate: config?.tracesSampleRate ?? 0.1,
-    
+
     // Don't log errors in development by default
     enabled: process.env.NODE_ENV === "production",
-    
+
     // Integrations
     integrations: [
       Sentry.browserTracingIntegration(),
@@ -55,24 +55,24 @@ export function initSentry(config?: SentryConfig): void {
         blockAllMedia: true,
       }),
     ],
-    
+
     // Before send hook to filter sensitive data
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // Don't log errors in development
       if (process.env.NODE_ENV === "development") {
         console.log("[Sentry] Event:", event);
         return null;
       }
-      
+
       // Remove sensitive data from events
       if (event.request) {
         delete event.request.cookies;
         delete event.request.headers;
       }
-      
+
       return event;
     },
-    
+
     // Configure breadcrumbs
     beforeBreadcrumb(breadcrumb) {
       // Filter out sensitive breadcrumbs
@@ -93,10 +93,13 @@ export function initSentry(config?: SentryConfig): void {
 /**
  * Capture an exception manually
  */
-export function captureException(error: Error, context?: {
-  tags?: Record<string, string>;
-  extra?: Record<string, unknown>;
-}): string | undefined {
+export function captureException(
+  error: Error,
+  context?: {
+    tags?: Record<string, string>;
+    extra?: Record<string, unknown>;
+  },
+): string | undefined {
   if (!isInitialized) {
     console.error("Sentry not initialized");
     return undefined;
@@ -111,7 +114,10 @@ export function captureException(error: Error, context?: {
 /**
  * Capture a message (info, warning, error)
  */
-export function captureMessage(message: string, level?: "info" | "warning" | "error"): string | undefined {
+export function captureMessage(
+  message: string,
+  level?: "info" | "warning" | "error",
+): string | undefined {
   if (!isInitialized) {
     return undefined;
   }
@@ -156,7 +162,11 @@ export function clearUserContext(): void {
 /**
  * Add a breadcrumb (user action log)
  */
-export function addBreadcrumb(message: string, category?: string, level?: Sentry.SeverityLevel): void {
+export function addBreadcrumb(
+  message: string,
+  category?: string,
+  level?: Sentry.SeverityLevel,
+): void {
   if (!isInitialized) {
     return;
   }
@@ -172,7 +182,10 @@ export function addBreadcrumb(message: string, category?: string, level?: Sentry
 /**
  * Start a performance transaction
  */
-export function startTransaction(name: string, op?: string): Sentry.Span | undefined {
+export function startTransaction(
+  name: string,
+  op?: string,
+): Sentry.Span | undefined {
   if (!isInitialized) {
     return undefined;
   }
@@ -186,14 +199,3 @@ export function startTransaction(name: string, op?: string): Sentry.Span | undef
 export function isSentryEnabled(): boolean {
   return isInitialized && !!process.env.NEXT_PUBLIC_SENTRY_DSN;
 }
-
-export default {
-  initSentry,
-  captureException,
-  captureMessage,
-  setUserContext,
-  clearUserContext,
-  addBreadcrumb,
-  startTransaction,
-  isSentryEnabled,
-};

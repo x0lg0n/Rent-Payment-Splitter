@@ -8,11 +8,11 @@ const server = new Horizon.Server(HORIZON_TESTNET_URL);
  */
 export const fetchTestnetXlmBalance = async (
   address: string,
-  abortSignal?: AbortSignal
+  _abortSignal?: AbortSignal,
 ) => {
   const account = await server.loadAccount(address);
   const nativeBalance = account.balances.find(
-    (balance) => balance.asset_type === "native"
+    (balance) => balance.asset_type === "native",
   );
   return nativeBalance ? Number(nativeBalance.balance) : 0;
 };
@@ -22,7 +22,7 @@ export const fetchTestnetXlmBalance = async (
  */
 export const fetchAccountDetails = async (
   address: string,
-  abortSignal?: AbortSignal
+  _abortSignal?: AbortSignal,
 ) => {
   try {
     const account = await server.loadAccount(address);
@@ -53,16 +53,20 @@ export const fetchTransactionHistory = async (
   address: string,
   limit: number = 20,
   cursor?: string,
-  abortSignal?: AbortSignal
+  _abortSignal?: AbortSignal,
 ) => {
-  let query = server.transactions().forAccount(address).order("desc").limit(limit);
-  
+  let query = server
+    .transactions()
+    .forAccount(address)
+    .order("desc")
+    .limit(limit);
+
   if (cursor) {
     query = query.cursor(cursor);
   }
-  
+
   const transactions = await query.call();
-  
+
   return {
     records: transactions.records.map((tx) => ({
       hash: tx.hash,

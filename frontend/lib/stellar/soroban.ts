@@ -1,22 +1,18 @@
 /**
  * Soroban RPC Utilities
- * 
+ *
  * Handles low-level Soroban RPC interactions including:
  * - Transaction simulation
  * - Auth entry handling
  * - Transaction submission and confirmation
  * - Event listening
- * 
+ *
  * Uses soroban-client package for Soroban RPC communication
  */
 
 // @ts-nocheck
 
-import {
-  Server,
-  Api as SorobanApi,
-  TransactionBuilder as SorobanTransactionBuilder,
-} from "soroban-client";
+import { Server, Api as SorobanApi } from "soroban-client";
 import {
   Transaction,
   TransactionBuilder,
@@ -26,7 +22,8 @@ import {
 import { config } from "../config";
 
 // Initialize Soroban RPC server
-const SOROBAN_RPC_URL = config.sorobanRpcUrl || "https://soroban-testnet.stellar.org";
+const SOROBAN_RPC_URL =
+  config.sorobanRpcUrl || "https://soroban-testnet.stellar.org";
 const NETWORK_PASSPHRASE = Networks.TESTNET;
 
 export const sorobanServer = new Server(SOROBAN_RPC_URL, {
@@ -38,13 +35,16 @@ export const sorobanServer = new Server(SOROBAN_RPC_URL, {
  */
 export async function sendTransaction(
   transaction: Transaction,
-  signedXdr: string
+  signedXdr: string,
 ): Promise<{ hash: string; confirmed: boolean; result?: any }> {
   // Parse signed transaction
-  const signedTransaction = TransactionBuilder.fromXDR(signedXdr, NETWORK_PASSPHRASE) as Transaction;
+  const signedTransaction = TransactionBuilder.fromXDR(
+    signedXdr,
+    NETWORK_PASSPHRASE,
+  ) as Transaction;
 
   // Submit to network
-  const sendResponse = await sorobanServer.sendTransaction(transaction);
+  const sendResponse = await sorobanServer.sendTransaction(signedTransaction);
 
   if (sendResponse.status !== "PENDING") {
     throw new Error(`Transaction submission failed: ${sendResponse.status}`);
@@ -85,7 +85,7 @@ export async function sendTransaction(
 export async function simulateTransaction(transaction: Transaction) {
   console.log("🔍 Simulating transaction...");
   const simulation = await sorobanServer.simulateTransaction(transaction);
-  
+
   if (simulation.error) {
     console.error("❌ Simulation failed:", simulation.error);
     throw new Error(`Simulation failed: ${simulation.error}`);
@@ -100,31 +100,33 @@ export async function simulateTransaction(transaction: Transaction) {
  */
 export function addSimulationData(
   tx: Transaction,
-  simulation: SorobanApi.SimulateTransactionResponse
+  simulation: SorobanApi.SimulateTransactionResponse,
 ): Transaction {
   // Add auth entries from simulation
-  const authEntries = simulation.results?.[0]?.auth || [];
-  
+  const _authEntries = simulation.results?.[0]?.auth || [];
+
   // Add resource fees from simulation
   if (simulation.transactionData) {
-    const sorobanData = new SorobanDataBuilder(simulation.transactionData).build();
-    
+    const sorobanData = new SorobanDataBuilder(
+      simulation.transactionData,
+    ).build();
+
     // Rebuild transaction with soroban data
     const txBuilder = new TransactionBuilder(
       TransactionBuilder.fromXDR(tx.toXDR(), NETWORK_PASSPHRASE) as Transaction,
       {
         fee: tx.fee,
         networkPassphrase: NETWORK_PASSPHRASE,
-      }
+      },
     );
-    
+
     txBuilder.setSorobanData(sorobanData);
-    
+
     // Add operations back
     tx.operations.forEach((op) => {
       txBuilder.addOperation(op);
     });
-    
+
     const timeout = (tx as any).timeoutAttr || 30;
     tx = txBuilder.setTimeout(timeout).build();
   }
@@ -153,11 +155,12 @@ export async function getLatestLedger(): Promise<number> {
 export async function listenToContractEvents(
   contractId: string,
   escrowId: bigint | undefined,
-  callback: (event: any) => void
+  callback: (event: any) => void,
 ): Promise<() => void> {
   // Build topics filter
-  const topics = escrowId
-    ? [["*", escrowId.toString()]] // Filter by escrow ID
+  const topics =
+    escrowId ?
+      [["*", escrowId.toString()]] // Filter by escrow ID
     : undefined;
 
   try {
@@ -199,7 +202,7 @@ export function parseContractEvent(event: any): {
   try {
     const type = event.topic[0]?.toString() || "unknown";
     const data = event.value;
-    
+
     return {
       type,
       data,
@@ -223,7 +226,7 @@ export function extractReturnValue(result: any): any {
     // Try to get return value from result
     if (result?.result?.value?.value) {
       const value = result.result.value.value;
-      
+
       // Handle different types
       if (value.toBigInt) {
         return value.toBigInt();
@@ -232,10 +235,10 @@ export function extractReturnValue(result: any): any {
       } else if (value.toString) {
         return value.toString();
       }
-      
+
       return value;
     }
-    
+
     return result;
   } catch (error) {
     console.error("Failed to extract return value:", error);

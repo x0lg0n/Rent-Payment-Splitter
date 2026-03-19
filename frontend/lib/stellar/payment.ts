@@ -6,7 +6,10 @@ import {
   StrKey,
   TransactionBuilder,
 } from "@stellar/stellar-sdk";
-import { HORIZON_TESTNET_URL, STELLAR_TESTNET_PASSPHRASE } from "@/lib/stellar/network";
+import {
+  HORIZON_TESTNET_URL,
+  STELLAR_TESTNET_PASSPHRASE,
+} from "@/lib/stellar/network";
 import { signWithFreighter } from "@/lib/wallet/freighter";
 
 const server = new Horizon.Server(HORIZON_TESTNET_URL);
@@ -30,11 +33,11 @@ export const isValidXlmAmount = (amount: string): boolean => {
   if (!AMOUNT_PATTERN.test(amount)) return false;
   const parsed = Number(amount);
   if (!Number.isFinite(parsed) || parsed <= 0) return false;
-  
+
   // Check against min/max limits
   if (parsed < MIN_SINGLE_PAYMENT) return false;
   if (parsed > MAX_SINGLE_PAYMENT) return false;
-  
+
   return true;
 };
 
@@ -59,34 +62,34 @@ export const checkAccountExists = async (address: string): Promise<boolean> => {
  */
 export const validateAmountAgainstBalance = (
   amount: string,
-  balance: number | null
+  balance: number | null,
 ): { valid: boolean; error?: string } => {
   if (!balance || balance <= 0) {
     return { valid: false, error: "Unable to fetch balance" };
   }
-  
+
   const paymentAmount = Number(amount);
   const baseFee = 100; // 100 stroops = 0.00001 XLM per operation
   const estimatedFee = baseFee * 2; // Account for potential additional operations
-  
-  const totalRequired = paymentAmount + (estimatedFee / 1e7);
-  
+
+  const totalRequired = paymentAmount + estimatedFee / 1e7;
+
   if (totalRequired > balance) {
-    return { 
-      valid: false, 
-      error: `Insufficient balance. Need ${totalRequired.toFixed(7)} XLM (including fees), have ${balance.toFixed(7)} XLM` 
+    return {
+      valid: false,
+      error: `Insufficient balance. Need ${totalRequired.toFixed(7)} XLM (including fees), have ${balance.toFixed(7)} XLM`,
     };
   }
-  
+
   // Check if payment would leave account below minimum balance
   const remainingBalance = balance - paymentAmount;
   if (remainingBalance < MIN_ACCOUNT_BALANCE && paymentAmount < balance) {
     return {
       valid: false,
-      error: `Payment would leave account below minimum reserve (${MIN_ACCOUNT_BALANCE} XLM)`
+      error: `Payment would leave account below minimum reserve (${MIN_ACCOUNT_BALANCE} XLM)`,
     };
   }
-  
+
   return { valid: true };
 };
 
@@ -95,9 +98,9 @@ const extractHorizonError = (error: unknown) => {
   if (!(error instanceof Error)) return fallback;
 
   const payload = error as Error & {
-    response?: { 
-      data?: { 
-        extras?: { 
+    response?: {
+      data?: {
+        extras?: {
           result_codes?: {
             operations?: string[];
             transaction?: string;
@@ -158,39 +161,41 @@ interface SendXlmPaymentResult {
  */
 export const waitForTransactionConfirmation = async (
   txHash: string,
-  timeoutMs: number = 60000
+  timeoutMs: number = 60000,
 ): Promise<{ confirmed: boolean; ledger?: number }> => {
   const startTime = Date.now();
-  
+
   while (Date.now() - startTime < timeoutMs) {
     try {
       // Use Horizon API to check transaction status
       const tx = await server.transactions().transaction(txHash).call();
-      
+
       if (tx && tx.successful) {
-        return { 
-          confirmed: true, 
-          ledger: tx.ledger_attr 
+        return {
+          confirmed: true,
+          ledger: tx.ledger_attr,
         };
       }
-      
+
       // Check if transaction failed
       if (tx && !tx.successful) {
-        return { 
-          confirmed: false 
+        return {
+          confirmed: false,
         };
       }
-      
+
       // Transaction not found yet, wait and retry
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (error) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (_error) {
       // Transaction not found yet, continue polling
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
-  
+
   // Timeout reached
-  throw new Error(`Transaction confirmation timeout after ${timeoutMs / 1000} seconds`);
+  throw new Error(
+    `Transaction confirmation timeout after ${timeoutMs / 1000} seconds`,
+  );
 };
 
 export const sendTestnetXlmPayment = async ({
@@ -206,9 +211,11 @@ export const sendTestnetXlmPayment = async ({
     throw new Error("Recipient address is invalid.");
   }
   if (!isValidXlmAmount(amount)) {
-    throw new Error("Amount must be a valid positive XLM value (max 10,000 XLM).");
+    throw new Error(
+      "Amount must be a valid positive XLM value (max 10,000 XLM).",
+    );
   }
-  
+
   // Check for self-send
   if (sourceAddress === destinationAddress) {
     throw new Error("Cannot send payment to yourself.");
@@ -249,28 +256,31 @@ export const sendTestnetXlmPayment = async ({
     // Submit transaction
     const result = await server.submitTransaction(signedTransaction);
     const txHash = result.hash;
-    
+
     // Wait for confirmation
     try {
       const confirmation = await waitForTransactionConfirmation(txHash);
-      
+
       if (!confirmation.confirmed) {
         throw new Error("Transaction was submitted but failed on-chain");
       }
-      
+
       return {
         hash: txHash,
         confirmed: true,
-        ledger: confirmation.ledger
+        ledger: confirmation.ledger,
       };
     } catch (confirmError) {
       // Transaction was submitted but confirmation failed
       // Log but don't throw - user should check explorer
-      console.warn("Transaction submitted but confirmation check failed:", confirmError);
-      
+      console.warn(
+        "Transaction submitted but confirmation check failed:",
+        confirmError,
+      );
+
       return {
         hash: txHash,
-        confirmed: false
+        confirmed: false,
       };
     }
   } catch (error) {
@@ -283,7 +293,7 @@ export const sendTestnetXlmPayment = async ({
  */
 export const fetchAccountTransactions = async (
   address: string,
-  limit: number = 20
+  limit: number = 20,
 ) => {
   try {
     const transactions = await server
@@ -292,8 +302,8 @@ export const fetchAccountTransactions = async (
       .order("desc")
       .limit(limit)
       .call();
-    
-    return transactions.records.map(tx => ({
+
+    return transactions.records.map((tx) => ({
       hash: tx.hash,
       ledger: tx.ledger_attr,
       createdAt: tx.created_at,
