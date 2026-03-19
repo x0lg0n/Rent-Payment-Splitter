@@ -1,11 +1,6 @@
 import { CheckCircle2, Circle, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-interface Participant {
-  address: string;
-  share_amount: bigint;
-  deposited: boolean;
-}
+import type { Participant } from "@/lib/contract-abi";
 
 interface ParticipantListProps {
   participants: Participant[];
@@ -31,6 +26,7 @@ export function ParticipantList({
       <div className="space-y-2">
         {participants.map((participant, index) => {
           const isCurrentUser = participant.address === currentUserId;
+          const isDeposited = participant.status === "Deposited";
           
           return (
             <div
@@ -70,7 +66,7 @@ export function ParticipantList({
                   </p>
                 </div>
                 
-                {participant.deposited ? (
+                {isDeposited ? (
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
                 ) : (
                   <Circle className="h-5 w-5 text-muted-foreground" />
