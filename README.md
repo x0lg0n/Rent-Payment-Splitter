@@ -91,7 +91,7 @@ Experience SplitRent on Stellar Testnet:
 
 | Resource                | Link                                                                                                                                |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **🌐 Live Application** | [https://splitrent.vercel.app](https://splitrent.vercel.app)                                                                        |
+| **🌐 Live Application** | [https://splitrent.vercel.app](https://rent-payment-splitter.vercel.app/)                                                                        |
 | **� Network**           | Stellar Testnet (default)                                                                                                           |
 | **� Get Test XLM**      | [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=test)                                                  |
 | **� Contract Explorer** | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CBA5V42PSZBF5EIDTFEVSBPPUWXIT6QNOVHBJM6BBDM4U33JLZ3MOGIC) |
@@ -123,25 +123,6 @@ graph TB
 3. **Funding Complete**: Contract marks escrow as fully funded when target reached
 4. **Distribution**: Landlord calls release to receive all funds
 5. **Refund (if needed)**: If deadline passes without full funding, participants can refund
-
-### Escrow States
-
-```
-┌─────────────┐
-│   Active    │ ── Timeout/Cancel ──► Refunding ──► Refunded
-│  (Created)  │
-└─────┬───────┘
-      │
-      ▼ (All deposits received)
-┌─────────────┐
-│ FullyFunded │ ── Dispute ──► Disputed ──► Resolved
-└─────┬───────┘
-      │
-      ▼ (Release called)
-┌─────────────┐
-│  Released   │
-└─────────────┘
-```
 
 ---
 
