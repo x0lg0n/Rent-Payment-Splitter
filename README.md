@@ -682,23 +682,6 @@ If this is your first open-source contribution, we're here to help!
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community guidelines          |
 | [SECURITY.md](SECURITY.md)               | Security policy and reporting |
 
-### Technical Documentation
-
-| Document                                                           | Description                      |
-| ------------------------------------------------------------------ | -------------------------------- |
-| [docs/STACK.md](docs/STACK.md)                                     | Technology stack decisions       |
-| [docs/ESCROW-INTEGRATION-PLAN.md](docs/ESCROW-INTEGRATION-PLAN.md) | Escrow integration guide         |
-| [docs/ESCROW-SERVICE-SPEC.md](docs/ESCROW-SERVICE-SPEC.md)         | Technical API specification      |
-| [QWEN.md](QWEN.md)                                                 | Project context and architecture |
-
-### Smart Contract Documentation
-
-| File                                                                             | Description             |
-| -------------------------------------------------------------------------------- | ----------------------- |
-| [SplitRent/contracts/escrow/src/lib.rs](SplitRent/contracts/escrow/src/lib.rs)   | Contract implementation |
-| [SplitRent/contracts/escrow/src/test.rs](SplitRent/contracts/escrow/src/test.rs) | Contract test suite     |
-| [SplitRent/Cargo.toml](SplitRent/Cargo.toml)                                     | Contract dependencies   |
-
 ---
 
 ## 🔒 Security
@@ -725,7 +708,7 @@ If this is your first open-source contribution, we're here to help!
 
 Please report security vulnerabilities responsibly:
 
-1. **Email**: [your-email@example.com](mailto:your-email@example.com)
+1. **Email**: [your-email@example.com](mailto:kumarsiddharthakain@gmail.com)
 2. **GitHub**: Use [Security Advisories](https://github.com/x0lg0n/Rent-Payment-Splitter/security/advisories)
 3. **Discord**: DM a maintainer in our [Discord server](https://discord.gg/M6qjt6Ek)
 
@@ -736,15 +719,6 @@ See our [Security Policy](SECURITY.md) for full details.
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
-
-### What This Means
-
-| Permission               | Condition                     |
-| ------------------------ | ----------------------------- |
-| ✅ Use commercially      | Include license and copyright |
-| ✅ Modify and distribute | No warranty provided          |
-| ✅ Private use           | Liability limited             |
-| ✅ Patent use            | Same license for derivatives  |
 
 ---
 
@@ -769,7 +743,7 @@ SplitRent is built on the shoulders of giants:
 | **GitHub Issues**      | [Report bugs or request features](https://github.com/x0lg0n/Rent-Payment-Splitter/issues) |
 | **GitHub Discussions** | [Join the conversation](https://github.com/x0lg0n/Rent-Payment-Splitter/discussions)      |
 | **Discord**            | [Join our community](https://discord.gg/M6qjt6Ek)                                         |
-| **Twitter**            | [@YourTwitter](https://twitter.com/YourTwitter) (coming soon)                             |
+| **Twitter**            | [@YourTwitter](https://twitter.com/x0lg0n)                           |
 
 ### Show Your Support
 
